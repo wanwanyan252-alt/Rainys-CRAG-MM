@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Example usage:
+# 示例用法：
 # ./run_task_generation.sh \
 #   --task task-2 --model-name gpt-5-mini --output-dir ~/experiments/results
 
@@ -20,10 +20,10 @@ EOF
   exit 1
 }
 
-# Defaults
+# 默认值
 num_conversations=-1
 
-# Parse args
+# 解析参数
 while [[ $# -gt 0 ]]; do
   case "$1" in
   --task)
@@ -53,13 +53,13 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# Validate required args
+# 校验必需参数
 if [[ -z "${task:-}" || -z "${model_name:-}" || -z "${output_dir:-}" ]]; then
   echo "Missing required arguments." >&2
   print_usage
 fi
 
-# Validate task choices
+# 校验任务选项
 case "$task" in
 st-vanilla | task-1 | task-2 | mt-vanilla | task-3) ;;
 *)
@@ -68,7 +68,7 @@ st-vanilla | task-1 | task-2 | mt-vanilla | task-3) ;;
   ;;
 esac
 
-# Determine task_args
+# 确定 task_args
 if [[ "$task" == "st-vanilla" || "$task" == "mt-vanilla" ]]; then
   task_args=(--suppress-image-search-api --suppress-web-search-api)
 elif [[ "$task" == "task-1" ]]; then
@@ -80,19 +80,19 @@ elif [[ "$task" == "task-2" || "$task" == "task-3" ]]; then
   )
 fi
 
-# Determine dataset_type
+# 确定 dataset_type
 if [[ "$task" == "st-vanilla" || "$task" == "task-1" || "$task" == "task-2" ]]; then
   dataset_type="single-turn"
 elif [[ "$task" == "mt-vanilla" || "$task" == "task-3" ]]; then
   dataset_type="multi-turn"
 fi
 
-# Expand output directory path (handle leading ~)
+# 展开输出目录路径（处理开头的 ~）
 if [[ "$output_dir" == ~* ]]; then
   output_dir="${HOME}${output_dir:1}"
 fi
 
-# Build command
+# 构建命令
 cmd=(
   python3 "local_evaluation.py"
   --mode generate
@@ -104,6 +104,6 @@ cmd=(
   --num-conversations "$num_conversations"
 )
 
-# Print and run
+# 打印并运行
 echo "Running: ${cmd[*]}"
 exec "${cmd[@]}"

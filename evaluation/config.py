@@ -1,34 +1,34 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+# 版权所有 (c) Meta Platforms, Inc. 及其关联公司。
+# 保留所有权利。
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# 本源代码依据本源代码树根目录下 LICENSE 文件中的
+# 许可证进行授权。
 
 """
-Configuration constants for CRAG-MM evaluation.
+CRAG-MM 评测的配置常量。
 
-This module centralizes all configuration parameters used throughout the evaluation process,
-including model settings, batch sizes, token limits, and dataset constants.
+本模块集中管理整个评测流程中使用的所有配置参数，
+包括模型设置、批大小、token 限制和数据集常量。
 """
 
 import os
 
-# Model Configuration
+# 模型配置
 DEFAULT_EVAL_MODEL = "gpt-4o"
 MAX_API_RETRIES = 3
 DEFAULT_NUM_WORKERS = 1
 
-# Batch Size Configuration
+# 批大小配置
 MIN_BATCH_SIZE = 1
 MAX_BATCH_SIZE = int(
     os.environ.get("MAX_BATCH_SIZE", "16")
-)  # Default to 16, configurable via environment
+)  # 默认为 16，可通过环境变量配置
 
-# Token Limits
+# 令牌限制
 MAX_RESPONSE_LENGTH_IN_TOKENS = 75
 MAX_EVAL_TOKENS = 1024
 
-# Dataset Constants - Sessions to Skip
+# 数据集常量 - 需要跳过的会话
 SESSIONS_TO_SKIP = {
     "single-turn": [
         "04d98259-27af-41b1-a7be-5798fd1b8e95",
@@ -40,7 +40,7 @@ SESSIONS_TO_SKIP = {
     ],
 }
 
-# Dataset Constants - Sessions to Update
+# 数据集常量 - 需要更新的会话
 SESSIONS_TO_UPDATE = {
     "single-turn": {
         "0df99a9a-6a5d-4ff4-b8e4-e3ee90209dfe": {

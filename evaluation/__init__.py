@@ -1,14 +1,14 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+# 版权所有 (c) Meta Platforms, Inc. 及其关联公司。
+# 保留所有权利。
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# 本源代码依据本源代码树根目录下 LICENSE 文件中的
+# 许可证进行授权。
 
 """
-Evaluation module for CRAG-MM dataset.
+CRAG-MM 数据集评测模块。
 
-This module provides a modular evaluation framework for the CRAG-MM benchmark,
-with components for configuration, dataset utilities, LLM-based judging, and evaluation orchestration.
+本模块为 CRAG-MM 基准提供模块化评测框架，
+包含配置、数据集工具、基于 LLM 的裁判和评测编排等组件。
 """
 
 from .config import (
@@ -31,10 +31,10 @@ from .evaluator import CRAGEvaluator
 from .llm_judge import LLMJudge
 
 __all__ = [
-    # Evaluator
+    # 评测器
     "CRAGEvaluator",
     "LLMJudge",
-    # Config
+    # 配置
     "DEFAULT_EVAL_MODEL",
     "DEFAULT_NUM_WORKERS",
     "MAX_API_RETRIES",
@@ -44,7 +44,7 @@ __all__ = [
     "MIN_BATCH_SIZE",
     "SESSIONS_TO_SKIP",
     "SESSIONS_TO_UPDATE",
-    # Dataset Utils
+    # 数据集工具
     "clean_text",
     "convert_domain_indices_to_names",
     "prepare_feature_vocabularies",

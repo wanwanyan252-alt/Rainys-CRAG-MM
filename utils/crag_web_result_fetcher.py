@@ -1,16 +1,15 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+# 版权所有 (c) Meta Platforms, Inc. 及其关联公司。
+# 保留所有权利。
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# 本源代码依据本源代码树根目录下 LICENSE 文件中的
+# 许可证进行授权。
 
-"""DO NOT MODIFY THIS FILE.
+"""请勿修改本文件。
 
-This file has simple functionality to get the full page content of a web search result.
-During evaluation, `page_content` attribute would already exist. It is advised to use
-this helper class to fetch the full page content instead of using `requests` directly in
-your code. Internet access is disabled during evaluation and using `requests` would fail
-the submission.
+本文件提供获取网页搜索结果完整页面内容的简单功能。
+评测期间，`page_content` 属性会预先存在。建议使用本辅助类来获取
+完整页面内容，而不要在你的代码中直接使用 `requests`。评测期间会
+禁用网络访问，使用 `requests` 会导致提交失败。
 """
 
 import os

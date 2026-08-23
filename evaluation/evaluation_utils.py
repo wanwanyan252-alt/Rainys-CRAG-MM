@@ -1,8 +1,8 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+# 版权所有 (c) Meta Platforms, Inc. 及其关联公司。
+# 保留所有权利。
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# 本源代码依据本源代码树根目录下 LICENSE 文件中的
+# 许可证进行授权。
 
 import pandas as pd
 import numpy as np
@@ -10,12 +10,12 @@ import numpy as np
 
 def calculate_scores(turn_evaluation_results_df: pd.DataFrame) -> dict[str, float]:
     """
-    Calculate scores for both single-turn and multi-turn conversations.
+    计算单轮和多轮对话的得分。
 
-    Args:
-        turn_evaluation_results_df: DataFrame with evaluation results for turns.
-    Returns:
-        Dictionary of calculated metrics.
+    参数:
+        turn_evaluation_results_df: 包含各轮评测结果的 DataFrame。
+    返回:
+        计算得到的各项指标字典。
     """
     multi_turn_conversation_score_map: dict[str, float] = {}
 
@@ -23,8 +23,8 @@ def calculate_scores(turn_evaluation_results_df: pd.DataFrame) -> dict[str, floa
         group: pd.DataFrame,
     ) -> pd.DataFrame:
         """
-        Mark as is_miss after consecutive incorrect responses
-        and calculate multi-turn conversation score for each conversation.
+        在连续答错后将后续各轮标记为 is_miss，
+        并为每段对话计算多轮对话得分。
         """
         group_copy = group.copy().reset_index(drop=True)
         for i in range(1, len(group_copy)):

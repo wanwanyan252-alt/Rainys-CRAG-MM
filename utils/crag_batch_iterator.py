@@ -1,19 +1,19 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+# 版权所有 (c) Meta Platforms, Inc. 及其关联公司。
+# 保留所有权利。
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# 本源代码依据本源代码树根目录下 LICENSE 文件中的
+# 许可证进行授权。
 
 """
-CRAG-MM Dataset Processing Module
+CRAG-MM 数据集处理模块
 
-This module provides tools for processing and batching the CRAG-MM dataset,
-which contains multi-turn conversations with images and text.
+本模块提供处理和批量化 CRAG-MM 数据集的工具。
+该数据集包含带有图像和文本的多轮对话。
 
-The main components are:
-1. CRAGTurnBatchIterator - Processes dataset into batches of conversation turns
-2. ImageLoader - Handles image loading from various sources
-3. Main execution code for debugging and demonstration
+主要组件：
+1. CRAGTurnBatchIterator - 将数据集处理为对话轮次的批次
+2. ImageLoader - 处理来自各种来源的图像加载
+3. 用于调试和演示的主执行代码
 """
 
 import random
@@ -27,28 +27,28 @@ from .utils import download_image_url, parse_jsonl_to_dict
 
 
 class ImageLoader:
-    """Handles loading and caching of images from various sources."""
+    """处理从各种来源加载和缓存图像。"""
 
     @staticmethod
     def load_image(conversation_data: dict[str, Any]) -> Image.Image:
         """
-        Load image from conversation data, downloading if necessary.
+        从对话数据中加载图像，必要时自动下载。
 
-        Args:
-            conversation_data: Dictionary containing image data or URL
+        参数:
+            conversation_data: 包含图像数据或 URL 的字典
 
-        Returns:
-            PIL Image object
+        返回:
+            PIL Image 对象
 
-        Notes:
-            - Either 'image' or 'image_url' will be provided in the dataset
-            - When the actual image cannot be included, only the image_url is available
+        说明:
+            - 数据集中会提供 'image' 或 'image_url' 之一
+            - 当无法直接包含图像时，只提供 image_url
         """
         image = conversation_data.get("image")
         image_url = conversation_data.get("image_url")
 
         if image is None and image_url:
-            # Download image from URL (with local caching)
+            # 从 URL 下载图像（带本地缓存）
             image_local_path = download_image_url(image_url)
             image = Image.open(image_local_path)
 
@@ -57,11 +57,10 @@ class ImageLoader:
 
 class CRAGTurnBatchIterator:
     """
-    Processes CRAG-MM dataset into batches of conversation turns.
+    将 CRAG-MM 数据集处理为对话轮次的批次。
 
-    This class handles the complex structure of the CRAG dataset, which contains
-    multi-turn conversations with images, and converts it into a format suitable
-    for model training or evaluation.
+    本类处理 CRAG 数据集的复杂结构——该数据集包含带有图像的多轮对话，
+    并将其转换为适合模型训练或评测的格式。
     """
 
     def __init__(
@@ -74,12 +73,12 @@ class CRAGTurnBatchIterator:
         sessions_to_update: dict = {},
     ):
         """
-        Initialize the batcher with dataset and parameters.
+        使用数据集和参数初始化批处理器。
 
-        Args:
-            dataset: HuggingFace dataset containing CRAG conversations
-            batch_size: Number of conversation turns to include in each batch
-            shuffle: Whether to shuffle the conversation order
+        参数:
+            dataset: 包含 CRAG 对话的 HuggingFace 数据集
+            batch_size: 每个批次包含的对话轮次数量
+            shuffle: 是否打乱对话顺序
         """
         self.dataset = dataset
         self.batch_size = batch_size
@@ -105,36 +104,36 @@ class CRAGTurnBatchIterator:
         total_turn_count: int,
     ) -> dict[str, Any]:
         """
-        Extract data for a single conversation turn.
+        提取单个对话轮次的数据。
 
-        Args:
-            conversation: Full conversation data
-            turn_idx: Index of the current turn
-            turn: Data for the current turn
-            session_id: ID of the conversation session
-            image: Image associated with the conversation
-            image_url: URL of the image
-            image_quality: Quality rating of the image
-            answer_lookup: Dictionary mapping interaction IDs to answers
-            total_turn_count: Total number of turns in the conversation
+        参数:
+            conversation: 完整的对话数据
+            turn_idx: 当前轮次的索引
+            turn: 当前轮次的数据
+            session_id: 对话会话 ID
+            image: 与对话关联的图像
+            image_url: 图像的 URL
+            image_quality: 图像质量评级
+            answer_lookup: 将 interaction_id 映射到答案的字典
+            total_turn_count: 对话中的总轮次数
 
-        Returns:
-            Dictionary with processed turn data
+        返回:
+            包含已处理轮次数据的字典
         """
-        # Extract basic turn information
+        # 提取基本轮次信息
         interaction_id = turn["interaction_id"]
         query = turn["query"]
         query_category = turn["query_category"]
         domain = turn["domain"]
         dynamism = turn["dynamism"]
 
-        # Get ground truth answer
+        # 获取标准答案
         answer = answer_lookup.get(interaction_id, False)
         assert (
             answer is not False
         ), f"No answer found for interaction_id: {interaction_id}"
 
-        # Extract conversation history up to this point
+        # 提取到当前轮次为止的对话历史
         conversation_history = []
         answer_history = []
         if turn_idx > 0:
@@ -148,11 +147,11 @@ class CRAGTurnBatchIterator:
                 f" session_id: {session_id}"
             )
 
-        # Resize egocentric frames
+        # 对第一人称帧进行缩放
         if image_url is None or len(image_url) == 0:
             image = image.resize((960, 1280))
 
-        # Return structured turn data
+        # 返回结构化的轮次数据
 
         return {
             "session_id": session_id,
@@ -174,15 +173,15 @@ class CRAGTurnBatchIterator:
 
     def _collate_batch(self, batch: list[dict[str, Any]]) -> dict[str, list[Any]]:
         """
-        Collate individual turn data into batch format.
+        将单个轮次数据整理为批格式。
 
-        Args:
-            batch: List of dictionaries with turn data
+        参数:
+            batch: 包含轮次数据的字典列表
 
-        Returns:
-            Dictionary with batched data
+        返回:
+            批量化后的数据字典
         """
-        # Initialize lists for all fields
+        # 初始化所有字段的列表
         batch_data = {
             "session_ids": [],
             "interaction_ids": [],
@@ -201,7 +200,7 @@ class CRAGTurnBatchIterator:
             "total_turn_counts": [],
         }
 
-        # Collect data from each item
+        # 从每个条目中收集数据
         for item in batch:
             batch_data["session_ids"].append(item["session_id"])
             batch_data["interaction_ids"].append(item["interaction_id"])
@@ -228,38 +227,37 @@ class CRAGTurnBatchIterator:
 
     def __iter__(self):
         """
-        Iterate through the dataset and yield batches of turns, ensuring that
-        turn N+1 for any conversation is only in a strictly later batch
-        than turn N from the same conversation.
+        遍历数据集并产出轮次批次，确保任意对话的第 N+1 轮
+        只会出现在比同一对话第 N 轮更晚的批次中。
 
-        This is critical for the correct batching strategy for the multi-turn
-        conversations, but should also work for the single-turn conversations.
+        这对多轮对话的正确批处理策略至关重要，
+        但也应适用于单轮对话。
         """
         from collections import deque
 
-        # For each conversation, track the next turn to produce:
-        # next_turn_idx[i] = k means we've consumed turns [0..k-1].
+        # 对每个对话，跟踪下一次要产出的轮次：
+        # next_turn_idx[i] = k 表示已消费轮次 [0..k-1]。
         next_turn_idx = [0] * len(self.dataset)
 
-        # Initialize the queue of conversation indices that have turns left
+        # 初始化仍有剩余轮次的对话索引队列
         queue = deque(self.indices)
 
-        # A cache for conversation data, images, and answers
-        self.conversation_cache = {}  # conv_id -> conversation dict
+        # 对话数据、图像和答案的缓存
+        self.conversation_cache = {}  # conv_id -> 对话字典
         self.answer_lookup_cache = {}  # conv_id -> {interaction_id -> ans_full}
-        self.image_cache = {}  # conv_id -> loaded PIL image
+        self.image_cache = {}  # conv_id -> 已加载的 PIL 图像
 
-        # We'll accumulate turn data in 'batch' each iteration
+        # 每次迭代都会在 'batch' 中累积轮次数据
         batch = []
 
         while queue:
             current_convs = []
-            # Pop conversation IDs from the queue up to batch_size
+            # 从队列中弹出对话 ID，直到达到 batch_size
             while queue and len(current_convs) < self.batch_size:
                 conv_id = queue.popleft()
                 current_convs.append(conv_id)
 
-            # Process exactly one turn per conversation in current_convs
+            # 对 current_convs 中每个对话仅处理一个轮次
             for conv_id in current_convs:
                 if self.dataset[conv_id]["session_id"] in self.sessions_to_skip:
                     logger.warning(
@@ -272,14 +270,14 @@ class CRAGTurnBatchIterator:
                     conv_data.update(self.sessions_to_update[conv_data["session_id"]])
 
                 # ---------------------------
-                # 1) LAZY-LOAD IF NECESSARY
+                # 1) 必要时惰性加载
                 # ---------------------------
                 if conv_id not in self.conversation_cache:
-                    # Load from dataset once
+                    # 从数据集中加载一次
                     self.conversation_cache[conv_id] = conv_data
 
-                    # Build answer lookup
-                    # conv_data for round 2 dataset is of the form
+                    # 构建答案查找表
+                    # 第 2 轮数据集中的 conv_data 形式如下
                     # {
                     #     "answers": {
                     #         "ans_full": [...],
@@ -287,7 +285,7 @@ class CRAGTurnBatchIterator:
                     #     },
                     #     ...
                     # }
-                    # conv_data for round 1 dataset is of the form
+                    # 第 1 轮数据集中的 conv_data 形式如下
                     # {
                     #     "answers": [
                     #         {
@@ -315,18 +313,18 @@ class CRAGTurnBatchIterator:
                     }
                     self.answer_lookup_cache[conv_id] = ans_lookup
 
-                    # Load and cache the image
+                    # 加载并缓存图像
                     self.image_cache[conv_id] = ImageLoader.load_image(conv_data)
 
                 # -------------------------
-                # 2) FETCH FROM THE CACHE
+                # 2) 从缓存中获取
                 # -------------------------
                 conversation = self.conversation_cache[conv_id]
                 answer_lookup = self.answer_lookup_cache[conv_id]
                 image = self.image_cache[conv_id]
 
-                # Identify which turn we need
-                # conv_data for round 2 dataset is of the form
+                # 确定需要的轮次
+                # 第 2 轮数据集中的 conv_data 形式如下
                 # {
                 #     "turns": {
                 #         "interaction_id": [...],
@@ -335,7 +333,7 @@ class CRAGTurnBatchIterator:
                 #     },
                 #     ...
                 # }
-                # conv_data for round 1 dataset is of the form
+                # 第 1 轮数据集中的 conv_data 形式如下
                 # {
                 #     "turns": [
                 #         {
@@ -362,7 +360,7 @@ class CRAGTurnBatchIterator:
                 image_url = conversation.get("image_url", None)
                 image_quality = conversation.get("image_quality", None)
 
-                # Build the single turn's data
+                # 构建单个轮次的数据
                 turn_data = self._extract_turn_data(
                     conversation=conversation,
                     turn_idx=turn_idx,
@@ -377,38 +375,37 @@ class CRAGTurnBatchIterator:
                 batch.append(turn_data)
 
                 # ------------------------
-                # 3) UPDATE TURN POINTER
+                # 3) 更新轮次指针
                 # ------------------------
                 next_turn_idx[conv_id] += 1
 
-                # If that conversation still has turns left, re-append it to the (front
-                # of the) queue
+                # 若该对话仍有剩余轮次，则重新加入队列（前端）
                 if next_turn_idx[conv_id] < total_turn_count:
                     queue.appendleft(conv_id)
-                    # note: appending to the left helps keep the cache size in check
+                    # 注意：追加到左侧有助于控制缓存大小
                 else:
-                    # No more turns in this conversation => remove from cache
+                    # 该对话没有更多轮次 => 从缓存中移除
                     del self.conversation_cache[conv_id]
                     del self.answer_lookup_cache[conv_id]
                     del self.image_cache[conv_id]
 
-            # Yield the entire batch as one chunk
+            # 将整个批次作为一个块产出
             yield self._collate_batch(batch)
             batch = []
 
-        # If there's anything left in batch, yield it
+        # 若 batch 中还有剩余内容，则产出
         if batch:
             yield self._collate_batch(batch)
 
 
 def main():
     """
-    Main function for demonstration and debugging.
+    用于演示和调试的主函数。
 
-    Loads the CRAG-MM dataset, processes it through the batcher,
-    and prints each batch to verify the implementation.
+    加载 CRAG-MM 数据集，通过批处理器处理，
+    并打印每个批次以验证实现。
     """
-    # Load dataset
+    # 加载数据集
     print("Loading CRAG-MM dataset...")
     from utils import ensure_crag_cache_dir_is_configured
 
@@ -421,7 +418,7 @@ def main():
     )
     dataset_split = dataset["public_test"]
 
-    # Create batcher
+    # 创建批处理器
     print(f"Creating batcher for {len(dataset_split)} conversations...")
     batch_size = 16
     full_query_file = "full_query/single_turn_full_query.jsonl"
@@ -431,14 +428,14 @@ def main():
         full_query_file=full_query_file,
         shuffle=True,
     )
-    # Process batches
+    # 处理批次
     print(f"Processing dataset in batches of {batch_size}...")
     for batch in tqdm.tqdm(crag_turn_batch_iterator):
-        # Just print batch size for demonstration
+        # 仅为演示打印批大小
         num_examples = len(batch["session_ids"])
         print(f"Batch with {num_examples} examples")
         print(f"Cache size: {len(crag_turn_batch_iterator.conversation_cache)}")
-        # Uncomment to print full batch details:
+        # 取消注释以打印完整批次详情：
         # print(batch)
 
 

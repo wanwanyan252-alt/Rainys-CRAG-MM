@@ -1,8 +1,8 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+# 版权所有 (c) Meta Platforms, Inc. 及其关联公司。
+# 保留所有权利。
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# 本源代码依据本源代码树根目录下 LICENSE 文件中的
+# 许可证进行授权。
 
 from pydantic import BaseModel
 
@@ -25,7 +25,7 @@ Please follow these guidelines when formulating your response:
 4. If you are uncertain or don’t know the answer, respond with “I don’t know”.
 """
 
-# Key Message Repeats
+# 关键消息重复片段
 KEY_RAG_PROMPT = (
     "Refer to the additional information above when answering the following question if"
     " you are confident that it includes relevant information. "
@@ -38,7 +38,7 @@ KEY_USER_PROMPT = (
 )
 
 
-# Query Re-write
+# 查询重写
 class QueryAnalysis(BaseModel):
     entity_name: str
     updated_question: str

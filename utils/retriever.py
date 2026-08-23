@@ -1,21 +1,27 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+# 版权所有 (c) Meta Platforms, Inc. 及其关联公司。
+# 保留所有权利。
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# 本源代码依据本源代码树根目录下 LICENSE 文件中的
+# 许可证进行授权。
 
 import json
+import sys
 
 from utils.crag_web_result_fetcher import WebSearchResult
 from cragmm_search.search import UnifiedSearchPipeline
 from PIL import Image
 
 NUM_IMG_SEARCH_RESULTS = 30
-IMG_TOKEN_CAP = int(2000 * 4)  # 4 as mulitplier for characters -> token
+IMG_TOKEN_CAP = int(2000 * 4)  # 4 为“字符数 -> token 数”的换算乘数
 
 NUM_WEB_SEARCH_RESULTS = 50
-WEB_TOKEN_CAP = int(8000 * 4)  # 1.5 as mulitplier for characters -> token
-IMG_SEARCH_CONFIDENCE_THRESHOLD = 0.75
+WEB_TOKEN_CAP = int(8000 * 4)  # 1.5 为“字符数 -> token 数”的换算乘数
+IMG_SEARCH_CONFIDENCE_THRESHOLD = 0.6
+
+
+def _safe_str(value):
+    encoding = sys.stdout.encoding or "utf-8"
+    return str(value).encode(encoding, errors="replace").decode(encoding)
 
 
 def get_rag_context(
@@ -26,16 +32,26 @@ def get_rag_context(
     web_search: bool,
     full_query: str = None,
 ) -> str:
-    """Retrieve RAG context for a single query."""
+    """为单个查询检索 RAG 上下文。"""
     if not image_search and not web_search:
         return ""
 
     rag_context = "<search results>"
 
-    # Image search results
+    # 图像搜索结果
     if image_search:
         img_context = ""
         image_search_results = search_pipeline(image, k=NUM_IMG_SEARCH_RESULTS)
+
+        print("========== IMAGE SEARCH RAW RESULTS ==========")
+        for idx, result in enumerate(image_search_results, 1):
+            print(f"[Result {idx}] score={result.get('score')}")
+            entity_names = [
+                entity.get("entity_name")
+                for entity in result.get("entities", [])
+            ]
+            print("entities:", _safe_str(entity_names))
+        print("==============================================")
         image_search_results = [
             image_search_result
             for image_search_result in image_search_results
@@ -78,7 +94,13 @@ def get_rag_context(
                 if len(img_context) > IMG_TOKEN_CAP:
                     break
 
+                retrieval_score = image_search_result.get("score", None)
+                retrieval_score_text = ""
+                if retrieval_score is not None:
+                    retrieval_score_text = f" (retrieval score: {retrieval_score:.3f})"
+
                 entities = image_search_result.get("entities", [])
+
                 for entity in entities:
                     entity_name = entity["entity_name"]
                     if entity_name in seen_entity:
@@ -91,7 +113,10 @@ def get_rag_context(
                     if (
                         len(img_context) + len(str(entity["entity_attributes"]))
                     ) < IMG_TOKEN_CAP:
-                        img_context += f"Entity {entity_count+1}: {entity_name}\n"
+                        img_context += (
+                            f"Entity {entity_count+1}: {entity_name}"
+                            f"{retrieval_score_text}\n"
+                        )
                         try:
                             entity_attributes = json.dumps(
                                 entity["entity_attributes"],
@@ -114,7 +139,7 @@ def get_rag_context(
                 " otherwise.\n\n"
             )
 
-    # Web search results if image summary is available
+    # 若已获得图像摘要，则进行网页搜索
     if web_search:
         web_context = ""
         search_query = query if not full_query else full_query

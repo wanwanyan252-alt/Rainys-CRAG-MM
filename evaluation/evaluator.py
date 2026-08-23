@@ -1,14 +1,14 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+# 版权所有 (c) Meta Platforms, Inc. 及其关联公司。
+# 保留所有权利。
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# 本源代码依据本源代码树根目录下 LICENSE 文件中的
+# 许可证进行授权。
 
 """
-Main evaluator class for CRAG-MM dataset.
+CRAG-MM 数据集的主评测器类。
 
-This module contains the CRAGEvaluator class that orchestrates the evaluation process,
-including response generation, semantic evaluation, and results calculation.
+本模块包含用于编排评测流程的 CRAGEvaluator 类，
+包括回答生成、语义评测和结果计算。
 """
 
 import json
@@ -47,12 +47,47 @@ from tokenizers import Tokenizer
 console = Console()
 
 
+class _WhitespaceEncoding:
+    def __init__(self, text: str, max_length: int) -> None:
+        self.ids = text.split()[:max_length]
+
+
+class _WhitespaceTokenizer:
+    def __init__(self, max_length: int) -> None:
+        self.max_length = max_length
+
+    def encode_batch(self, texts: list[str]) -> list[_WhitespaceEncoding]:
+        return [_WhitespaceEncoding(text, self.max_length) for text in texts]
+
+    def decode(self, ids: list[str]) -> str:
+        return " ".join(ids)
+
+
+def _load_response_tokenizer() -> Tokenizer | _WhitespaceTokenizer:
+    tokenizer_name = os.environ.get("CRAG_RESPONSE_TOKENIZER")
+    if not tokenizer_name:
+        return _WhitespaceTokenizer(MAX_RESPONSE_LENGTH_IN_TOKENS)
+
+    try:
+        tokenizer = Tokenizer.from_pretrained(tokenizer_name)
+    except Exception as exc:
+        console.print(
+            "[yellow]Response tokenizer could not be loaded from Hugging Face; "
+            "using local whitespace truncation for this run.[/yellow]"
+        )
+        console.print(f"[dim]{exc}[/dim]")
+        return _WhitespaceTokenizer(MAX_RESPONSE_LENGTH_IN_TOKENS)
+
+    tokenizer.enable_truncation(max_length=MAX_RESPONSE_LENGTH_IN_TOKENS)
+    return tokenizer
+
+
 class CRAGEvaluator:
     """
-    A class to evaluate an agent on the CRAG-MM dataset.
+    用于在 CRAG-MM 数据集上评测智能体的类。
 
-    This evaluator generates responses, evaluates them (optionally using a semantic evaluation model),
-    computes multi-turn conversation metrics, and (optionally) saves the results.
+    该评测器会生成回答、评测回答（可选使用语义评测模型）、
+    计算多轮对话指标，并可选择保存结果。
     """
 
     def __init__(
@@ -84,30 +119,29 @@ class CRAGEvaluator:
         self.dataset_type = dataset_type
         self.full_query_file = full_query_path
 
-        # Internal state for evaluation; these are set during initialization
+        # 评测所需的内部状态；这些值会在初始化阶段设置
         self.batch_iterator: CRAGTurnBatchIterator | None = None
         self.conversations_count: int = 0
         self.agent_response_map: dict[str, str] = {}
         self.all_turn_data: list[dict[str, any]] = []
         self.session_ids_evaluated: set[str] = set()
 
-        self.tokenizer = Tokenizer.from_pretrained("meta-llama/Llama-3.2-1B-Instruct")
-        self.tokenizer.enable_truncation(max_length=MAX_RESPONSE_LENGTH_IN_TOKENS)
+        self.tokenizer = _load_response_tokenizer()
 
-        # Initialize LLM Judge if evaluation model is provided
+        # 若提供了评测模型，则初始化 LLM 裁判
         self.llm_judge: LLMJudge | None = None
         if self.eval_model_name and self.eval_api_key:
             self.llm_judge = LLMJudge(self.eval_api_key, self.eval_model_name)
 
     def evaluate_response(self, crag_turn_data: dict[str, any]) -> dict[str, any]:
         """
-        Evaluate a single response and return evaluation results.
+        评测单条回答并返回评测结果。
 
-        Args:
-            crag_turn_data: A dictionary containing query, ground truth, and agent response.
+        参数:
+            crag_turn_data: 包含查询、标准答案和智能体回答的字典。
 
-        Returns:
-            A dictionary with evaluation results added to crag_turn_data.
+        返回:
+            添加了评测结果的 crag_turn_data 字典。
         """
         agent_response = crag_turn_data["agent_response"]
         ground_truth = crag_turn_data["ground_truth"]
@@ -124,10 +158,10 @@ class CRAGEvaluator:
         is_semantically_correct = False
         api_response = None
 
-        # Begin by assuming exact match correctness
+        # 先假设精确匹配结果即为正确性结果
         is_correct = is_exact_match
 
-        # Use semantic evaluation if not an exact match and an evaluation model is provided.
+        # 若不是精确匹配且提供了评测模型，则使用语义评测
         if not is_idk and not is_exact_match and self.llm_judge:
             api_response = self.llm_judge.evaluate(query, ground_truth, agent_response)
             if api_response:
@@ -147,10 +181,9 @@ class CRAGEvaluator:
 
     def initialize_for_generation(self) -> None:
         """
-        Initialize variables needed for generation-only mode.
+        初始化仅生成模式所需的变量。
 
-        Lighter version of initialize_evaluation() that only sets up
-        what's needed for response generation.
+        这是 initialize_evaluation() 的轻量版本，只设置回答生成所需的内容。
         """
         if self.dataset is None or self.agent is None:
             raise ValueError("Dataset and agent are required for generation")
@@ -169,7 +202,7 @@ class CRAGEvaluator:
         self.all_turn_data = []
         self.session_ids_evaluated = set()
 
-        # Instantiate the CRAG turn based batch iterator
+        # 实例化基于 CRAG 轮次的批迭代器
         self.batch_iterator = CRAGTurnBatchIterator(
             dataset=self.dataset,
             batch_size=batch_size,
@@ -179,15 +212,15 @@ class CRAGEvaluator:
             sessions_to_update=SESSIONS_TO_UPDATE.get(self.dataset_type, {}),
         )
 
-        # Store feature vocabularies for domain mapping
+        # 保存用于领域映射的特征词表
         self.feature_vocabularies = prepare_feature_vocabularies(self.dataset)
 
     def initialize_evaluation(self) -> None:
         """
-        Initialize variables needed for full evaluation (generation + evaluation).
+        初始化完整评测（生成 + 评测）所需的变量。
 
-        This method sets internal state including the batch iterator, conversation count,
-        agent response map, and turn data list.
+        此方法会设置内部状态，包括批迭代器、对话数量、
+        智能体回答映射和轮次数据列表。
         """
         console.print(
             f"[blue]Starting evaluation with {self.num_workers} workers[/blue]"
@@ -197,17 +230,17 @@ class CRAGEvaluator:
                 f"[blue]Using semantic evaluation with model: {self.eval_model_name}[/blue]"
             )
 
-        # Use the same initialization logic as generation mode
+        # 使用与生成模式相同的初始化逻辑
         self.initialize_for_generation()
 
     def generate_agent_responses(
         self, progress_callback: Callable[[int, int], None] = None
     ) -> None:
         """
-        Phase 1: Generate agent responses for each turn in the dataset.
+        阶段 1：为数据集中的每个轮次生成智能体回答。
 
-        This method iterates over the dataset batches using the internal batch iterator and updates the evaluator's state
-        with agent responses and turn data.
+        此方法使用内部批迭代器遍历数据集批次，并用智能体回答和轮次数据
+        更新评测器状态。
         """
         start_time = time.time()
         if self.batch_iterator is None:
@@ -232,7 +265,7 @@ class CRAGEvaluator:
 
             message_histories = []
             interaction_id_histories = []
-            # Build message histories for multi-turn conversations
+            # 构建多轮对话的消息历史
             for conversation_history in conversation_histories:
                 message_history = []
                 interaction_id_history = []
@@ -254,7 +287,7 @@ class CRAGEvaluator:
                 message_histories.append(message_history)
                 interaction_id_histories.append(interaction_id_history)
 
-            # Convert domain indices to domain names before passing to agent
+            # 传给智能体前，将领域索引转换为领域名称
             domain_names = convert_domain_indices_to_names(
                 batch["domains"], self.feature_vocabularies
             )
@@ -271,7 +304,7 @@ class CRAGEvaluator:
                 for query, image, full_query in zip(queries, images, full_queries)
             ]
 
-            # Generate responses for the current batch
+            # 为当前批次生成回答
             agent_responses = self.agent.batch_generate_response(
                 queries,
                 images,
@@ -281,9 +314,9 @@ class CRAGEvaluator:
             )
             agent_responses = self.truncate_agent_responses(
                 agent_responses
-            )  # Truncase each response to the maximum allowed length (75 tokens)
+            )  # 将每条回答截断到允许的最大长度（75 个令牌）
 
-            # Collect responses and add evaluation data
+            # 收集回答并添加评测数据
             for idx, interaction_id in enumerate(interaction_ids):
                 agent_response = agent_responses[idx]
                 self.agent_response_map[interaction_id] = agent_response
@@ -326,13 +359,13 @@ class CRAGEvaluator:
         progress_callback: Callable[[int, int], None] = None,
     ) -> tuple[dict[str, pd.DataFrame], dict[str, dict[str, float]]]:
         """
-        Phase 2: Evaluate agent responses and calculate scores.
+        阶段 2：评测智能体回答并计算分数。
 
-        This method uses a thread-based parallel executor to avoid pickling issues.
-        Args:
-            turn_data: List of turn data including agent responses.
-        Returns:
-            A tuple containing turn evaluation results and score dictionaries.
+        此方法使用基于线程的并行执行器，以避免 pickle 问题。
+        参数:
+            turn_data: 包含智能体回答的轮次数据列表。
+        返回:
+            包含轮次评测结果和分数字典的元组。
         """
         results = []
         with ThreadPoolExecutor(max_workers=self.num_workers) as executor:
@@ -349,7 +382,7 @@ class CRAGEvaluator:
                 if progress_callback is not None:
                     progress_callback(future_idx, len(turn_data))
 
-        # Convert the interim evaluation results to a pandas dataframe
+        # 将中间评测结果转换为 pandas 数据帧
         turn_evaluation_results_df = pd.DataFrame(results)
         turn_evaluation_results_df = turn_evaluation_results_df.sort_values(
             by=["session_id", "turn_idx"]
@@ -380,12 +413,12 @@ class CRAGEvaluator:
         output_dir: str,
     ) -> None:
         """
-        Save evaluation results to the specified directory.
+        将评测结果保存到指定目录。
 
-        Args:
-            turn_evaluation_results: The evaluation results to save.
-            scores_dictionary: The scores dictionary to save.
-            output_dir: Path where to save the results.
+        参数:
+            turn_evaluation_results: 要保存的评测结果。
+            scores_dictionary: 要保存的分数字典。
+            output_dir: 保存结果的路径。
         """
         os.makedirs(os.path.dirname(os.path.abspath(output_dir)), exist_ok=True)
         now = datetime.now()
@@ -415,10 +448,10 @@ class CRAGEvaluator:
 
     def save_turn_data(self, output_file: str) -> None:
         """
-        Save turn data to a JSONL file for later evaluation.
+        将轮次数据保存到 JSONL 文件，供后续评测使用。
 
-        Args:
-            output_file: Path where to save the turn data in JSONL format.
+        参数:
+            output_file: 以 JSONL 格式保存轮次数据的路径。
         """
         output_dir = os.path.dirname(os.path.abspath(output_file))
         os.makedirs(output_dir, exist_ok=True)
@@ -450,13 +483,13 @@ class CRAGEvaluator:
 
     def load_turn_data(self, input_file: str) -> list[dict[str, any]]:
         """
-        Load turn data from a JSONL file.
+        从 JSONL 文件加载轮次数据。
 
-        Args:
-            input_file: Path to the JSONL file containing turn data.
+        参数:
+            input_file: 包含轮次数据的 JSONL 文件路径。
 
-        Returns:
-            List of turn data dictionaries.
+        返回:
+            轮次数据字典列表。
         """
         if not os.path.exists(input_file):
             raise FileNotFoundError(f"Input file not found: {input_file}")
@@ -466,7 +499,7 @@ class CRAGEvaluator:
             for line_num, line in enumerate(f, 1):
                 try:
                     data = json.loads(line.strip())
-                    # Validate that required fields are present
+                    # 校验必需字段是否存在
                     required_fields = [
                         "session_id",
                         "interaction_id",
@@ -490,29 +523,29 @@ class CRAGEvaluator:
 
     def evaluate_agent(self) -> tuple[dict[str, any], dict[str, any]]:
         """
-        Evaluate an agent on a dataset and return performance metrics.
+        在数据集上评测智能体并返回性能指标。
 
-        Returns:
-            A tuple containing a dictionary of turn evaluation results and a dictionary of scores.
+        返回:
+            包含轮次评测结果字典和分数字典的元组。
         """
-        # Phase 0: Initialize evaluation state
+        # 阶段 0：初始化评测状态
         self.initialize_evaluation()
 
-        # Phase 1: Generate agent responses (updates internal state)
+        # 阶段 1：生成智能体回答（会更新内部状态）
         def _generation_progress_callback(
             conversations_evaluated: int, total_conversations: int
         ) -> None:
-            # Can be useful to track progress of the evaluation
+            # 可用于跟踪评测进度
             pass
 
         self.generate_agent_responses(_generation_progress_callback)
 
-        # Phase 2: Evaluate responses using stored turn data
+        # 阶段 2：使用已保存的轮次数据评测回答
 
         def _evaluation_progress_callback(
             turn_evaluated: int, total_turns: int
         ) -> None:
-            # Can be useful to track progress of the evaluation
+            # 可用于跟踪评测进度
             pass
 
         turn_evaluation_results, score_dictionaries = self.evaluate_agent_responses(
@@ -522,7 +555,7 @@ class CRAGEvaluator:
 
     def truncate_agent_responses(self, agent_responses: list[str]) -> list[str]:
         """
-        Truncate each agent response to the maximum allowed length.
+        将每条智能体回答截断到允许的最大长度。
         """
         encodings = self.tokenizer.encode_batch(agent_responses)
         trimmed_agent_responses = [self.tokenizer.decode(enc.ids) for enc in encodings]

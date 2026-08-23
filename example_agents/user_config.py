@@ -1,46 +1,63 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+# 版权所有 (c) Meta Platforms, Inc. 及其关联公司。
+# 保留所有权利。
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
-
-from .closed_model_agents import ClaudeAgent, GeminiAgent, GPTAgent
-from .open_source_model_agents import InternVLAgent, LlamaAgent, PixtralAgent, QwenAgent
-from .random_agent import RandomAgent
-
-# Mapping from model name keywords to agent names
-MODEL_KEYWORD_TO_AGENT = {
-    "pixtral": PixtralAgent,
-    "claude": ClaudeAgent,
-    "gpt": GPTAgent,
-    "gemini": GeminiAgent,
-    "llama": LlamaAgent,
-    "internvl": InternVLAgent,
-    "qwen": QwenAgent,
-    "random": RandomAgent
-}
+# 本源代码依据本源代码树根目录下 LICENSE 文件中的
+# 许可证进行授权。
 
 
 def get_agent_from_model_name(model_name: str):
     """
-    Parse the model name to extract the corresponding agent.
+    根据模型名称懒加载对应 Agent。
 
-    Args:
-        model_name: The model name string (e.g., "meta-llama/Llama-3.2-11B-Vision-Instruct")
-
-    Returns:
-        The agent class corresponding to the model name.
-
-    Raises:
-        ValueError: If no matching agent is found for the given model name.
+    这样在本地只跑 random 时，不会提前导入 vllm / anthropic / google 等重依赖。
     """
     model_name_lower = model_name.lower()
 
-    for keyword, agent in MODEL_KEYWORD_TO_AGENT.items():
-        if keyword in model_name_lower:
-            return agent
+    if "random" in model_name_lower:
+        from .random_agent import RandomAgent
+        return RandomAgent
 
-    supported_keywords = ", ".join(MODEL_KEYWORD_TO_AGENT.keys())
+    if "debug" in model_name_lower:
+        from .debug_agent import DebugAgent
+        return DebugAgent
+
+    if "rule" in model_name_lower:
+        from .rule_agent import RuleAgent
+        return RuleAgent
+
+    if "idk" in model_name_lower:
+        from .idk_agent import IdkAgent
+        return IdkAgent
+
+    if "claude" in model_name_lower:
+        from .closed_model_agents import ClaudeAgent
+        return ClaudeAgent
+
+    if "gpt" in model_name_lower:
+        from .closed_model_agents import GPTAgent
+        return GPTAgent
+
+    if "gemini" in model_name_lower:
+        from .closed_model_agents import GeminiAgent
+        return GeminiAgent
+
+    if "llama" in model_name_lower:
+        from .open_source_model_agents import LlamaAgent
+        return LlamaAgent
+
+    if "pixtral" in model_name_lower:
+        from .open_source_model_agents import PixtralAgent
+        return PixtralAgent
+
+    if "internvl" in model_name_lower:
+        from .open_source_model_agents import InternVLAgent
+        return InternVLAgent
+
+    if "qwen" in model_name_lower:
+        from .open_source_model_agents import QwenAgent
+        return QwenAgent
+
+    supported_keywords = "random, debug, rule, idk, claude, gpt, gemini, llama, pixtral, internvl, qwen"
     raise ValueError(
         f"Cannot find a corresponding agent for model '{model_name}'. "
         f"Model name must contain one of the following keywords: {supported_keywords}"

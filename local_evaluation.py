@@ -1,23 +1,23 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+# 版权所有 (c) Meta Platforms, Inc. 及其关联公司。
+# 保留所有权利。
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# 本源代码依据本源代码树根目录下 LICENSE 文件中的
+# 许可证进行授权。
 
 """
-Evaluator Script for CRAG-MM dataset
+CRAG-MM 数据集评测脚本
 
-This script evaluates an agent (using a user-provided agent `UserAgent` as configured in `agents/user_config.py`)
-on the CRAG-MM dataset. It generates responses, evaluates them (using an optional semantic evaluation model via OpenAI API),
-computes multi-turn conversation metrics, and optionally saves the results.
+本脚本在 CRAG-MM 数据集上评测智能体（使用 `agents/user_config.py` 中配置的用户提供的 `UserAgent`）。
+它会生成回答、评测回答（可选通过 OpenAI API 使用语义评测模型）、
+计算多轮对话指标，并可选择保存结果。
 
-This is a lightweight CLI wrapper that imports the evaluation logic from the evaluation module.
+这是一个轻量级 CLI 包装器，会从 evaluation 模块导入评测逻辑。
 """
 
 import argparse
 import os
 
-# Load environment variables first
+# 首先加载环境变量
 import pandas as pd
 from dotenv import load_dotenv
 from rich.console import Console
@@ -26,7 +26,7 @@ from utils.utils import display_results, ensure_crag_cache_dir_is_configured
 
 load_dotenv()
 
-# Set tokenizers parallelism before importing any HF libraries
+# 在导入任何 HF 库之前设置分词器并行选项
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", None)
 
@@ -41,7 +41,7 @@ console = Console()
 
 
 def setup_eval_model(eval_model: str) -> str | None:
-    """Helper function to setup evaluation model with warning if disabled."""
+    """设置评测模型的辅助函数；若禁用则显示警告。"""
     if eval_model.lower() == "none":
         console.print(
             Panel(
@@ -65,8 +65,8 @@ def display_and_save_results(
     score_dictionaries: dict[str, dict[str, float]],
     args: argparse.Namespace,
 ) -> None:
-    """Helper function to display and optionally save results."""
-    # Display all results
+    """展示结果并按需保存的辅助函数。"""
+    # 展示全部结果
     display_results(
         console,
         turn_evaluation_results["all"],
@@ -76,7 +76,7 @@ def display_and_save_results(
         is_multi_turn=getattr(args, "dataset_type", "multi-turn") == "multi-turn",
     )
 
-    # Display ego results if available
+    # 如有第一人称结果，则展示
     if len(turn_evaluation_results["ego"]) > 0:
         display_results(
             console,
@@ -87,7 +87,7 @@ def display_and_save_results(
             is_multi_turn=getattr(args, "dataset_type", "multi-turn") == "multi-turn",
         )
 
-    # Save results if output directory specified
+    # 若指定了输出目录，则保存结果
     if args.output_dir:
         evaluator.save_results(
             turn_evaluation_results, score_dictionaries, args.output_dir
@@ -201,13 +201,13 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    # Create output directory if it doesn't exist
+    # 若输出目录不存在，则创建
     os.makedirs(args.output_dir, exist_ok=True)
 
-    # Define the response file path
+    # 定义回答文件路径
     response_file = os.path.join(args.output_dir, "response.jsonl")
 
-    # Validate mode-specific arguments
+    # 校验各模式专用参数
     if args.mode == "generate" and os.path.exists(response_file):
         raise ValueError(
             f"Error: {response_file} already exists and will be overwritten in generate mode. "
@@ -223,14 +223,14 @@ def main() -> None:
         if OPENAI_API_KEY is None:
             raise ValueError("OPENAI_API_KEY environment variable is not set!")
 
-    # For evaluate-only mode, we don't need to load dataset or initialize agent
+    # 在仅评测模式下，无需加载数据集或初始化智能体
     if args.mode == "evaluate":
         console.print("[bold blue]Running evaluation-only mode...[/bold blue]")
 
-        # Setup evaluation model with warning if needed
+        # 按需设置评测模型并显示警告
         args.eval_model = setup_eval_model(args.eval_model)
 
-        # Create minimal evaluator for evaluation-only
+        # 为仅评测模式创建最小评测器
         evaluator = CRAGEvaluator(
             dataset=None,
             agent=None,
@@ -242,19 +242,19 @@ def main() -> None:
             dataset_type=args.dataset_type,
         )
 
-        # Load turn data and evaluate
+        # 加载轮次数据并进行评测
         turn_data = evaluator.load_turn_data(args.input_file)
         turn_evaluation_results, score_dictionaries = (
             evaluator.evaluate_agent_responses(turn_data)
         )
 
-        # Display and save results using helper function
+        # 使用辅助函数展示并保存结果
         display_and_save_results(
             evaluator, turn_evaluation_results, score_dictionaries, args
         )
         return
 
-    # For generate or both modes, we need dataset and agent
+    # 在生成模式或双模式下，需要数据集和智能体
     console.print(f"[bold blue]Loading {args.dataset_type} dataset...[/bold blue]")
     repo_name = f"crag-mm-2025/crag-mm-{args.dataset_type}-public"
     console.print(
@@ -269,29 +269,35 @@ def main() -> None:
         f" {len(dataset[split_to_use])} examples"
     )
 
-    # Setup evaluation model with warning if needed
+    # 按需设置评测模型并显示警告
     args.eval_model = setup_eval_model(args.eval_model)
 
     if args.num_conversations == -1:
         args.num_conversations = len(dataset[split_to_use])
 
-    # Suppress web search API if the flag is set - useful for Task 1 (Single-source
-    # Augmentation)
+    # 如果设置了标志，则禁用网页搜索 API，这对任务 1（单源增强）很有用
     search_api_text_model_name = "BAAI/bge-large-en-v1.5"
     search_api_image_model_name = "openai/clip-vit-large-patch14-336"
     search_api_web_hf_dataset_id = "crag-mm-2025/web-search-index-public-test"
     search_api_image_hf_dataset_id = "crag-mm-2025/image-search-index-public-test"
 
-    if args.suppress_web_search_api:
-        # Suppress web search API - useful for Task 1 (Single-source Augmentation)
-        search_api_web_hf_dataset_id = None
+    if args.suppress_web_search_api and args.suppress_image_search_api:
+        search_pipeline = None
+    else:
+        if args.suppress_web_search_api:
+            search_api_web_hf_dataset_id = None
+            search_api_text_model_name = None
 
-    search_pipeline = UnifiedSearchPipeline(
-        text_model_name=search_api_text_model_name,
-        image_model_name=search_api_image_model_name,
-        web_hf_dataset_id=search_api_web_hf_dataset_id,
-        image_hf_dataset_id=search_api_image_hf_dataset_id,
-    )
+        if args.suppress_image_search_api:
+            search_api_image_hf_dataset_id = None
+            search_api_image_model_name = None
+
+        search_pipeline = UnifiedSearchPipeline(
+            text_model_name=search_api_text_model_name,
+            image_model_name=search_api_image_model_name,
+            web_hf_dataset_id=search_api_web_hf_dataset_id,
+            image_hf_dataset_id=search_api_image_hf_dataset_id,
+        )
 
     UserAgent = get_agent_from_model_name(args.model_name)
 
@@ -313,7 +319,7 @@ def main() -> None:
     )
 
     if args.mode == "generate":
-        # Generation-only mode
+        # 仅生成模式
         console.print("[bold blue]Running generation-only mode...[/bold blue]")
         evaluator.initialize_for_generation()
         evaluator.generate_agent_responses()
@@ -323,14 +329,14 @@ def main() -> None:
         )
         return
 
-    # Both mode (default behavior)
+    # 双模式（默认行为）
     console.print("[bold blue]Running both generation and evaluation...[/bold blue]")
     turn_evaluation_results, score_dictionaries = evaluator.evaluate_agent()
 
-    # Save intermediate turn data
+    # 保存中间轮次数据
     evaluator.save_turn_data(response_file)
 
-    # Display and save results using helper function
+    # 使用辅助函数展示并保存结果
     display_and_save_results(
         evaluator, turn_evaluation_results, score_dictionaries, args
     )

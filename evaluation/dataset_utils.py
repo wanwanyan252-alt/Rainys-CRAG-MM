@@ -1,14 +1,14 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+# 版权所有 (c) Meta Platforms, Inc. 及其关联公司。
+# 保留所有权利。
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# 本源代码依据本源代码树根目录下 LICENSE 文件中的
+# 许可证进行授权。
 
 """
-Dataset utility functions for CRAG-MM evaluation.
+CRAG-MM 评测的数据集工具函数。
 
-This module provides utilities for dataset preparation and processing,
-including domain mapping, text cleaning, and feature vocabulary extraction.
+本模块提供数据集准备和处理相关工具，
+包括领域映射、文本清洗和特征词表提取。
 """
 
 import re
@@ -16,16 +16,16 @@ from typing import List
 
 
 def prepare_feature_vocabularies(dataset_split):
-    """Extract feature vocabularies for category encoding from dataset.
+    """从数据集中提取用于类别编码的特征词表。
 
-    These vocabularies allow conversion between integer indices and string labels.
+    这些词表可用于在整数索引和字符串标签之间转换。
 
-    Args:
-        dataset_split: The dataset split to extract vocabularies from.
+    参数:
+        dataset_split: 要从中提取词表的数据集划分。
 
-    Returns:
-        Dictionary containing feature vocabularies for domain, query_category,
-        dynamism, and image_quality.
+    返回:
+        包含 domain、query_category、dynamism 和 image_quality
+        特征词表的字典。
     """
     turns_feature = dataset_split.features["turns"]
     return {
@@ -39,39 +39,39 @@ def prepare_feature_vocabularies(dataset_split):
 def convert_domain_indices_to_names(
     domain_indices: List[int], feature_vocabularies: dict
 ) -> List[str]:
-    """Convert domain integer indices to string names using feature vocabularies.
+    """使用特征词表将领域整数索引转换为字符串名称。
 
-    Args:
-        domain_indices: List of integer domain indices
-        feature_vocabularies: Dictionary containing domain feature mappings
+    参数:
+        domain_indices: 领域整数索引列表
+        feature_vocabularies: 包含领域特征映射的字典
 
-    Returns:
-        List of domain name strings
+    返回:
+        领域名称字符串列表
     """
     domain_feature = feature_vocabularies["domain"].feature
     domain_names = []
 
     for domain_idx in domain_indices:
         if isinstance(domain_idx, list) and len(domain_idx) > 0:
-            # Handle case where domain is a list (take first element)
+            # 处理 domain 为列表的情况（取第一个元素）
             domain_idx = domain_idx[0]
 
         if domain_idx is not None and 0 <= domain_idx < len(domain_feature.names):
             domain_names.append(domain_feature.names[domain_idx])
         else:
-            domain_names.append("other")  # Default fallback
+            domain_names.append("other")  # 默认回退值
 
     return domain_names
 
 
 def clean_text(text: str) -> str:
-    """Clean text by lowercasing and removing all non-alphanumeric characters.
+    """通过转小写并移除所有非字母数字字符来清洗文本。
 
-    Args:
-        text: The text to clean.
+    参数:
+        text: 要清洗的文本。
 
-    Returns:
-        Cleaned text with only lowercase alphanumeric characters and spaces.
+    返回:
+        仅包含小写字母数字字符和空格的清洗后文本。
     """
-    # Lowercase and remove all non-alphanumeric characters (including apostrophes)
+    # 转为小写并移除所有非字母数字字符（包括撇号）
     return re.sub(r"[^a-z0-9\s]", "", text.lower())

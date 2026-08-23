@@ -1,8 +1,8 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+# 版权所有 (c) Meta Platforms, Inc. 及其关联公司。
+# 保留所有权利。
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# 本源代码依据本源代码树根目录下 LICENSE 文件中的
+# 许可证进行授权。
 
 import os
 from itertools import zip_longest
@@ -29,13 +29,13 @@ from .prompt_constants import (
     QueryAnalysis,
 )
 
-# GPU utilization settings
-# Change VLLM_TENSOR_PARALLEL_SIZE during local runs based on your available GPUs
-# For example, if you have 2 GPUs on the server, set VLLM_TENSOR_PARALLEL_SIZE=2.
-# You may need to uncomment the following line to perform local evaluation with
-# VLLM_TENSOR_PARALLEL_SIZE>1.
+# GPU 利用率设置
+# 本地运行时，请根据可用 GPU 数量调整 VLLM_TENSOR_PARALLEL_SIZE
+# 例如，如果服务器上有 2 张 GPU，则设置 VLLM_TENSOR_PARALLEL_SIZE=2。
+# 如需使用 VLLM_TENSOR_PARALLEL_SIZE>1 进行本地评测，
+# 可能需要取消下方这一行的注释。
 
-#### Please ensure that when you submit, VLLM_TENSOR_PARALLEL_SIZE=1.
+#### 请确保提交时 VLLM_TENSOR_PARALLEL_SIZE=1。
 VLLM_TENSOR_PARALLEL_SIZE = torch.cuda.device_count()
 
 if VLLM_TENSOR_PARALLEL_SIZE > 1:
@@ -43,8 +43,7 @@ if VLLM_TENSOR_PARALLEL_SIZE > 1:
 
 VLLM_GPU_MEMORY_UTILIZATION = 0.85
 
-# These are model specific parameters to get the model to run on a single NVIDIA L40s
-# GPU
+# 这些是让模型在单张 NVIDIA L40s GPU 上运行的模型专用参数
 MAX_MODEL_LEN = 30000
 MAX_NUM_SEQS = 2
 
@@ -52,7 +51,7 @@ MAX_GENERATION_TOKENS = 1000
 
 
 class VlmAgent(BaseAgent):
-    """Base Agent that uses vllm library to load LLM / VLM models"""
+    """使用 vllm 库加载 LLM/VLM 模型的基础智能体。"""
 
     def __init__(
         self,
@@ -61,12 +60,11 @@ class VlmAgent(BaseAgent):
         **kwargs,
     ):
         """
-        Initialize the agent
+        初始化智能体。
 
-        Args:
-            model_name (str): Hugging Face model name to use for vision-language
-              processing.
-            max_gen_len (int): Maximum generation length for model outputs.
+        参数:
+            model_name (str): 用于视觉语言处理的 Hugging Face 模型名称。
+            max_gen_len (int): 模型输出的最大生成长度。
         """
         super().__init__()
         self.model_name = model_name
@@ -80,8 +78,8 @@ class VlmAgent(BaseAgent):
         return AutoTokenizer.from_pretrained(self.model_name)
 
     def _initialize_models(self):
-        """Initialize the vLLM model and tokenizer with appropriate settings."""
-        # Initialize the model with vLLM
+        """使用适当设置初始化 vLLM 模型和分词器。"""
+        # 使用 vLLM 初始化模型
         return vllm.LLM(
             self.model_name,
             tensor_parallel_size=VLLM_TENSOR_PARALLEL_SIZE,
@@ -112,7 +110,7 @@ class VlmAgent(BaseAgent):
     def _process_messages(
         self, messages: list, image: Image.Image
     ) -> dict[str, str | dict[str, Image.Image]]:
-        # Apply chat template
+        # 应用聊天模板
         formatted_prompt = self.tokenizer.apply_chat_template(
             messages,
             add_generation_prompt=True,
@@ -158,13 +156,13 @@ class VlmAgent(BaseAgent):
         rag_context_list: list[str],
         **kwargs,
     ) -> list[str]:
-        """Generate responses for a batch of queries with associated images."""
-        # Prepare prompts and image data
+        """为一批查询及其关联图像生成回答。"""
+        # 准备提示和图像数据
         inputs = self._prepare_formatted_prompts(
             queries, images, message_histories, rag_context_list
         )
 
-        # Generate responses
+        # 生成回答
         outputs = self.llm.generate(inputs, sampling_params=self.sampling_params)
 
         responses = [output.outputs[0].text for output in outputs]
@@ -178,13 +176,13 @@ class LlamaAgent(VlmAgent):
 
 class PixtralAgent(VlmAgent):
     def _initialize_models(self):
-        # Initialize the model with vLLM
+        # 使用 vLLM 初始化模型
         return vllm.LLM(
             self.model_name,
             max_model_len=MAX_MODEL_LEN,
             limit_mm_per_prompt={
                 "image": 1
-            },  # In the CRAG-MM dataset, every conversation has at most 1 image
+            },  # 在 CRAG-MM 数据集中，每个对话最多有 1 张图像
         )
 
     def _build_image_content(self, image: Image.Image) -> str:
@@ -252,7 +250,7 @@ class QueryRewrite(VlmAgent):
         message_histories: list[list[dict[str, Any]]],
         **kwargs,
     ) -> list[str]:
-        """Generate responses for a batch of queries with associated images."""
+        """为一批查询及其关联图像生成回答。"""
         formatted_prompts = []
         for query in queries:
             formatted_prompt = self.tokenizer.apply_chat_template(
@@ -269,7 +267,7 @@ class QueryRewrite(VlmAgent):
             )
             formatted_prompts.append(formatted_prompt)
 
-        # Create input list with multimodal data
+        # 创建包含多模态数据的输入列表
         inputs = [
             {"prompt": formatted_prompt, "multi_modal_data": {"image": img}}
             for img, formatted_prompt in zip(images, formatted_prompts)
@@ -287,7 +285,7 @@ class QueryRewrite(VlmAgent):
 
         analysis_responses = [output.outputs[0].text for output in outputs]
 
-        # Stage-2 Format output
+        # 第二阶段：格式化输出
         prompts = []
         for query, response in zip(queries, analysis_responses):
             prompt = self.tokenizer.apply_chat_template(
@@ -309,7 +307,7 @@ class QueryRewrite(VlmAgent):
             )
             prompts.append(prompt)
 
-        # Generate responses
+        # 生成回答
         json_schema = QueryAnalysis.model_json_schema()
         guided_decoding_params_json = GuidedDecodingParams(json=json_schema)
         outputs = self.llm.generate(

@@ -1,16 +1,15 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+# 版权所有 (c) Meta Platforms, Inc. 及其关联公司。
+# 保留所有权利。
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# 本源代码依据本源代码树根目录下 LICENSE 文件中的
+# 许可证进行授权。
 
-"""DO NOT MODIFY THIS FILE.
+"""请勿修改本文件。
 
-This file contains ImageLoader class which can be used to download and cache images.
-During evaluation, the cache is prepopulated with all available images and everything is
-loaded from cache. Internet access is disabled during evaluation and using image URLs
-that are not part of the provided dataset would lead to an error (All `requests.get`
-calls would fail).
+本文件包含 ImageLoader 类，用于下载并缓存图像。
+评测期间，缓存会被预先填充所有可用图像，一切都从缓存加载。
+评测期间会禁用网络访问，使用不属于所提供数据集的图像 URL
+会导致报错（所有 `requests.get` 调用都会失败）。
 """
 
 import os

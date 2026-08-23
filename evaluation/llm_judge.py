@@ -1,14 +1,13 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+# 版权所有 (c) Meta Platforms, Inc. 及其关联公司。
+# 保留所有权利。
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# 本源代码依据本源代码树根目录下 LICENSE 文件中的
+# 许可证进行授权。
 
 """
-LLM-as-a-Judge implementation for semantic evaluation.
+用于语义评测的 LLM-as-a-Judge 实现。
 
-This module provides functionality for using OpenAI API to semantically evaluate
-agent responses against ground truth answers.
+本模块提供使用 OpenAI API 将智能体回答与标准答案进行语义评测的功能。
 """
 
 import time
@@ -24,14 +23,14 @@ console = Console()
 
 
 class LLMJudge:
-    """LLM-as-a-Judge for semantic evaluation of agent responses."""
+    """用于智能体回答语义评测的 LLM-as-a-Judge。"""
 
     def __init__(self, api_key: str, model_name: str):
-        """Initialize the LLM Judge.
+        """初始化 LLM 裁判。
 
-        Args:
-            api_key: OpenAI API key for authentication.
-            model_name: Name of the model to use for evaluation (e.g., "gpt-4o").
+        参数:
+            api_key: 用于身份认证的 OpenAI API key。
+            model_name: 用于评测的模型名称（例如 "gpt-4o"）。
         """
         self.api_key = api_key
         self.model_name = model_name
@@ -39,10 +38,10 @@ class LLMJudge:
         self.prompt = CRAGMultiModalPrompts()
 
     def get_system_message(self) -> str:
-        """Get the system message for the evaluator.
+        """获取评测器使用的系统消息。
 
-        Returns:
-            System message combining instructions and in-context examples.
+        返回:
+            结合说明和上下文示例的系统消息。
         """
         message_system = (
             self.prompt.get_instructions()
@@ -52,14 +51,14 @@ class LLMJudge:
         return message_system
 
     def parse_response(self, eval_result: str) -> Tuple[bool | None, str]:
-        """Parse the eval result and return (is_correct, reason).
+        """解析评测结果并返回 (is_correct, reason)。
 
-        Args:
-            eval_result: The evaluation result from the LLM.
+        参数:
+            eval_result: 来自 LLM 的评测结果。
 
-        Returns:
-            Tuple of (is_correct, reason) where is_correct is True/False/None
-            and reason is the full evaluation result.
+        返回:
+            (is_correct, reason) 元组，其中 is_correct 为 True/False/None，
+            reason 为完整评测结果。
         """
         try:
             if "Result: WRONG" in eval_result or "WRONG" in eval_result.split("\n")[-1]:
@@ -79,14 +78,14 @@ class LLMJudge:
         messages: list,
         max_retries: int = MAX_API_RETRIES,
     ) -> dict[str, any] | None:
-        """Attempt an API call to the OpenAI API with retries.
+        """尝试调用 OpenAI API，并在失败时重试。
 
-        Args:
-            messages: List of message objects for the conversation.
-            max_retries: Maximum number of retry attempts before giving up.
+        参数:
+            messages: 对话消息对象列表。
+            max_retries: 放弃前的最大重试次数。
 
-        Returns:
-            Dictionary with evaluation result if successful, None if all attempts fail.
+        返回:
+            成功时返回包含评测结果的字典；所有尝试均失败时返回 None。
         """
         for attempt in range(max_retries):
             try:
@@ -116,15 +115,15 @@ class LLMJudge:
     def evaluate(
         self, query: str, ground_truth: str, agent_response: str
     ) -> dict[str, any] | None:
-        """Evaluate an agent response against ground truth.
+        """根据标准答案评测智能体回答。
 
-        Args:
-            query: The query/question asked.
-            ground_truth: The expected correct answer.
-            agent_response: The agent's response to evaluate.
+        参数:
+            query: 被询问的查询/问题。
+            ground_truth: 期望的正确答案。
+            agent_response: 要评测的智能体回答。
 
-        Returns:
-            Dictionary with evaluation result or None if evaluation fails.
+        返回:
+            包含评测结果的字典；若评测失败则返回 None。
         """
         messages = [
             {"role": "system", "content": self.get_system_message()},

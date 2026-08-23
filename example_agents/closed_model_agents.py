@@ -1,8 +1,8 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
+# 版权所有 (c) Meta Platforms, Inc. 及其关联公司。
+# 保留所有权利。
 
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# 本源代码依据本源代码树根目录下 LICENSE 文件中的
+# 许可证进行授权。
 
 import os
 import time
@@ -23,7 +23,7 @@ from .prompt_constants import SYSTEM_MULTI_PROMPT, SYSTEM_PROMPT
 
 class ClosedModelBaseAgent(BaseAgent):
     """
-    Base class for closed model agents (Claude, Gemini, GPT) with common functionality.
+    封闭模型智能体（Claude、Gemini、GPT）的基类，包含通用功能。
     """
 
     def __init__(self, model_name: str, **kwargs):
@@ -37,16 +37,16 @@ class ClosedModelBaseAgent(BaseAgent):
     @property
     @abstractmethod
     def api_key_env_var(self) -> str:
-        """Get the environment variable name for the API key."""
+        """获取 API key 对应的环境变量名。"""
         pass
 
     @abstractmethod
     def _setup_client(self, api_key: str):
-        """Setup the API client for the specific model provider."""
+        """为特定模型提供方设置 API 客户端。"""
         pass
 
     def _build_image_content(self, image: Image.Image) -> list[dict[str, Any]]:
-        """Generate image content in the format expected by the model provider."""
+        """按模型提供方期望的格式生成图像内容。"""
         return [
             {
                 "type": "image_url",
@@ -58,7 +58,7 @@ class ClosedModelBaseAgent(BaseAgent):
 
     @abstractmethod
     def _make_api_call(self, messages: Any) -> str:
-        """Make API call to the model provider."""
+        """调用模型提供方的 API。"""
         pass
 
     def get_batch_size(self) -> int:
@@ -73,18 +73,18 @@ class ClosedModelBaseAgent(BaseAgent):
         **kwargs,
     ) -> list[str]:
         """
-        Generate RAG-enhanced responses for a batch of queries with associated images.
+        为一批查询及其关联图像生成 RAG 增强回答。
         """
-        responses = [None] * len(queries)  # Pre-allocate response list
+        responses = [None] * len(queries)  # 预分配回答列表
 
         def process_single_query(idx, query, image, history, rag_context):
-            """Process a single query with RAG context."""
+            """结合 RAG 上下文处理单个查询。"""
             try:
                 messages = self._prepare_messages(query, image, history, rag_context)
 
-                # Make API call with optimized retry logic and exponential backoff.
+                # 使用优化后的重试逻辑和指数退避进行 API 调用
                 last_exception = None
-                # Exponential backoff delays: 0.1s, 0.5s
+                # 指数退避延迟：0.1s、0.5s
                 retry_delays = [0.1, 0.5]
                 for attempt in range(3):
                     try:
@@ -92,14 +92,13 @@ class ClosedModelBaseAgent(BaseAgent):
                         return idx, response
                     except Exception as e:
                         error_str = str(e)
-                        # Check if this is an image size error
+                        # 检查是否为图像大小错误
                         if (
                             isinstance(self, ClaudeAgent)
                             and "image exceeds" in error_str.lower()
                         ):
                             print(f"Claude API image size error: {error_str}")
-                            # If we have the original query parameters, retry with
-                            # resized image
+                            # 若仍有原始查询参数，则使用缩放后的图像重试
                             print("Retrying with resized image...")
                             messages = self._prepare_messages(
                                 query,
@@ -120,7 +119,7 @@ class ClosedModelBaseAgent(BaseAgent):
                         else:
                             print(f"API error (attempt {attempt + 1}/3): {e}")
                             last_exception = e
-                            if attempt < 2:  # Don't sleep if the last attempt fails
+                            if attempt < 2:  # 最后一次尝试失败时不再等待
                                 time.sleep(retry_delays[attempt])
                 return (
                     idx,
@@ -130,20 +129,19 @@ class ClosedModelBaseAgent(BaseAgent):
                 print(f"Error processing query {idx}: {e}")
                 return idx, f"[Error processing query: {e}]"
 
-        # Use optimized ThreadPoolExecutor for concurrent API calls
-        # Use deterministic concurrency based on batch size (25% of batch size, min 1,
-        # max 8)
+        # 使用优化后的 ThreadPoolExecutor 并发执行 API 调用
+        # 根据批大小确定并发数（批大小的 25%，最小 1，最大 8）
         batch_size = self.get_batch_size()
         max_workers = max(
             1,
             min(
-                batch_size // 4,  # 25% of batch size
-                8,  # Cap at 8 to avoid overwhelming APIs
-                len(queries),  # Don't create more workers than queries
+                batch_size // 4,  # 批大小的 25%
+                8,  # 上限为 8，避免 API 过载
+                len(queries),  # 不创建超过查询数量的工作线程
             ),
         )
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            # Submit all tasks
+            # 提交所有任务
             future_to_idx = {
                 executor.submit(
                     process_single_query, idx, query, image, history, rag_context
@@ -153,12 +151,12 @@ class ClosedModelBaseAgent(BaseAgent):
                 )
             }
 
-            # Collect results as they complete with progress tracking
+            # 在任务完成时收集结果并跟踪进度
             for future in as_completed(future_to_idx):
                 try:
                     idx, response = future.result(
                         timeout=120
-                    )  # 2 minute timeout per query
+                    )  # 每个查询 2 分钟超时
                     responses[idx] = response
                 except Exception as e:
                     idx = future_to_idx[future]
@@ -169,7 +167,7 @@ class ClosedModelBaseAgent(BaseAgent):
 
 class ClaudeAgent(ClosedModelBaseAgent):
     """
-    Agent for Anthropic Claude models (Claude 3 family, etc).
+    Anthropic Claude 模型（Claude 3 系列等）的智能体。
     """
 
     def __init__(self, model_name: str = "claude-3-7-sonnet-latest", **kwargs):
@@ -177,15 +175,15 @@ class ClaudeAgent(ClosedModelBaseAgent):
 
     @property
     def api_key_env_var(self) -> str:
-        """Environment variable name for the Anthropic API key."""
+        """Anthropic API key 的环境变量名。"""
         return "ANTHROPIC_API_KEY"
 
     def _setup_client(self, api_key: str):
-        """Setup Claude API client."""
+        """设置 Claude API 客户端。"""
         self.client = Anthropic(api_key=api_key)
 
     def _build_image_content(self, image: Image.Image) -> list[dict[str, Any]]:
-        """Generate image content in the format expected by the model provider."""
+        """按模型提供方期望的格式生成图像内容。"""
         return [
             {
                 "type": "image",
@@ -198,8 +196,8 @@ class ClaudeAgent(ClosedModelBaseAgent):
         ]
 
     def _make_api_call(self, messages: list[dict]) -> str:
-        """Make Claude API call."""
-        system_prompt = messages.pop(0)["content"]  # Extract system prompt
+        """调用 Claude API。"""
+        system_prompt = messages.pop(0)["content"]  # 提取系统提示
         response = self.client.messages.create(
             model=self.model_name,
             system=system_prompt,
@@ -217,7 +215,7 @@ class ClaudeAgent(ClosedModelBaseAgent):
 
 class GeminiAgent(ClosedModelBaseAgent):
     """
-    Agent for Google Gemini models (Gemini Pro, Gemini 2.5 Flash, etc).
+    Google Gemini 模型（Gemini Pro、Gemini 2.5 Flash 等）的智能体。
     """
 
     def __init__(
@@ -228,11 +226,11 @@ class GeminiAgent(ClosedModelBaseAgent):
 
     @property
     def api_key_env_var(self) -> str:
-        """Environment variable name for the Google API key."""
+        """Google API key 的环境变量名。"""
         return "GOOGLE_API_KEY"
 
     def _setup_client(self, api_key: str):
-        """Setup Gemini API client."""
+        """设置 Gemini API 客户端。"""
         configure(api_key=api_key)
         self.model = GenerativeModel(
             self.model_name,
@@ -261,14 +259,14 @@ class GeminiAgent(ClosedModelBaseAgent):
     def _add_message(self, messages: Messages, message: Message) -> None:
         role = "model" if message["role"] == "assistant" else "user"
         if messages and messages[-1]["role"] == role:
-            # Append to existing content block
+            # 追加到已有内容块
             messages[-1]["parts"].append(message["content"])
         else:
-            # Create new content block
+            # 创建新的内容块
             messages.append({"role": role, "parts": [message["content"]]})
 
     def _make_api_call(self, messages: Messages) -> str:
-        """Make Gemini API call with robust finish_reason handling."""
+        """调用 Gemini API，并稳健处理 finish_reason。"""
         response = self.model.generate_content(
             contents=messages,
             generation_config={
@@ -277,14 +275,14 @@ class GeminiAgent(ClosedModelBaseAgent):
                 "top_k": 1,
             },
         )
-        # Robustly check finish_reason for first candidate
+        # 稳健检查首个候选项的 finish_reason
         candidate = None
         if hasattr(response, "candidates") and response.candidates:
             candidate = response.candidates[0]
             finish_reason = getattr(candidate, "finish_reason", None)
             if finish_reason == 4:
                 return "[Gemini API blocked response due to copyrighted material.]"
-        # If no valid Part/text, return fallback
+        # 若没有有效的 Part/text，则返回回退值
         if not hasattr(response, "text") or not response.text:
             return "[Gemini API returned no valid text part.]"
         return response.text
@@ -292,7 +290,7 @@ class GeminiAgent(ClosedModelBaseAgent):
 
 class GPTAgent(ClosedModelBaseAgent):
     """
-    Agent for OpenAI GPT models (GPT-4o, GPT-5, GPT-5-thinking, GPT-5-mini).
+    OpenAI GPT 模型（GPT-4o、GPT-5、GPT-5-thinking、GPT-5-mini）的智能体。
     """
 
     def __init__(self, model_name: str = "gpt-5-mini", **kwargs):
@@ -300,15 +298,15 @@ class GPTAgent(ClosedModelBaseAgent):
 
     @property
     def api_key_env_var(self) -> str:
-        """Environment variable name for the OpenAI API key."""
+        """OpenAI API key 的环境变量名。"""
         return "OPENAI_API_KEY"
 
     def _setup_client(self, api_key: str):
-        """Setup OpenAI API client."""
+        """设置 OpenAI API 客户端。"""
         self.client = openai.OpenAI(api_key=api_key)
 
     def _make_api_call(self, messages: list[dict]) -> str:
-        """Make GPT API call."""
+        """调用 GPT API。"""
         if self.model_name.startswith("gpt-5"):
             response = self.client.chat.completions.create(
                 model=self.model_name,
@@ -329,7 +327,7 @@ class GPTAgent(ClosedModelBaseAgent):
 
 class LlamaClosedAgent(ClosedModelBaseAgent):
     """
-    Agent for Llama models through wearables api.
+    通过 wearables API 使用 Llama 模型的智能体。
     """
 
     def __init__(self, model_name: str = "llama3.2-90b-instruct", **kwargs):
@@ -337,17 +335,17 @@ class LlamaClosedAgent(ClosedModelBaseAgent):
 
     @property
     def api_key_env_var(self) -> str:
-        """Environment variable name for the Wearables API key."""
+        """Wearables API key 的环境变量名。"""
         return "WEARABLES_API_KEY"
 
     def _setup_client(self, api_key: str):
-        """Setup OpenAI API client."""
+        """设置 OpenAI API 客户端。"""
         self.client = openai.OpenAI(
             api_key=api_key, base_url="https://api.wearables-ape.io/models/v1"
         )
 
     def _make_api_call(self, messages: list[dict]) -> str:
-        """Make GPT API call."""
+        """调用 GPT API。"""
         response = self.client.chat.completions.create(
             model=self.model_name,
             messages=messages,
