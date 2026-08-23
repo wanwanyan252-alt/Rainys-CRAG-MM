@@ -3,6 +3,7 @@
 # Environment files
 .env
 .vscode
+.venv-light/
 
 # Results directory
 results/
