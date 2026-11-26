@@ -1,0 +1,85 @@
+{
+  "name": "crag-mm-p5-training-prep",
+  "created_date": "2026-11-24",
+  "source_positions": [
+    0,
+    399
+  ],
+  "external_heldout_positions": [
+    400,
+    599
+  ],
+  "split_rule": "sha256(session_id) mod 10; 0-7 train, 8-9 dev",
+  "counts": {
+    "sft": 1413,
+    "preferences": 368,
+    "hard_negatives": 91,
+    "tasks": {
+      "answer_or_abstain": 400,
+      "entity": 144,
+      "evidence_selection": 316,
+      "ocr": 9,
+      "query_rewrite": 144,
+      "route": 400
+    },
+    "splits": {
+      "dev": 326,
+      "train": 1087
+    },
+    "hard_negative_types": {
+      "comparison_or_direction_error": 2,
+      "unresolved_entity_guess": 51,
+      "unsupported_or_meta_answer": 6,
+      "wrong_answer_or_evidence_mismatch": 32
+    }
+  },
+  "deduplicated": {
+    "sft": 0,
+    "preferences": 0,
+    "hard_negatives": 0
+  },
+  "weak_labels": {
+    "ocr": "Llama structured visual output; requires sampling review",
+    "entity": "accepted only with entity consistency or correct-answer weak label",
+    "evidence": "selected by answer-token and numeric overlap"
+  },
+  "files": {
+    "multitask_train.jsonl": {
+      "count": 1087,
+      "sha256": "08616ec81d10ce78a96eb576713d4c3a872673b45b55d6780bc719ab0b25b0e4",
+      "bytes": 2764568
+    },
+    "multitask_dev.jsonl": {
+      "count": 326,
+      "sha256": "b403be0c8e9781eb3c517e7f5042fb5a784254611aff1048e1177b2f50c91d7a",
+      "bytes": 842444
+    },
+    "preferences_train.jsonl": {
+      "count": 281,
+      "sha256": "97b311134a5cf3254e871e4089c223ff4cdc49568700b800c626da06501a6eb7",
+      "bytes": 1034131
+    },
+    "preferences_dev.jsonl": {
+      "count": 87,
+      "sha256": "1161d7b9c9919d42bb22d8adb768dcf8bc42bf1163b7aefa374978e7dd8e328e",
+      "bytes": 306373
+    },
+    "hard_negatives_train.jsonl": {
+      "count": 66,
+      "sha256": "a6db8072ce617c494014fc125f5450d28cb1888d3ac8eee443d7108ef64f3e28",
+      "bytes": 220669
+    },
+    "hard_negatives_dev.jsonl": {
+      "count": 25,
+      "sha256": "7ca756165c59f62c03f8883b837e8ad5071388618237eb21f1d8a335c6594f45",
+      "bytes": 68495
+    }
+  },
+  "sources": {
+    "full_results": "artifacts\\crag_v0.1.2_full_blind_cloud\\results_full_1938.json",
+    "full_judgments": "artifacts\\crag_v0.1.2_full_blind_cloud\\deepseek_flash_judgments_full_1938.json",
+    "structured_results": "artifacts\\crag_v0.1.2_full_blind_cloud\\results_hybrid_raw_200_599.json",
+    "structured_judgments": "artifacts\\crag_v0.1.2_full_blind_cloud\\deepseek_flash_judgments_hybrid_raw_200_599.json"
+  },
+  "manifest_sha256_before_self_reference": "eb17592e821f6471fdca9267bda9afe606397234092788528eb71bc4a2e07906"
+}

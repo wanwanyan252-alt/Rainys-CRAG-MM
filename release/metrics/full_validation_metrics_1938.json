@@ -1,0 +1,381 @@
+{
+  "dataset": "crag-mm-2025/crag-mm-single-turn-public",
+  "revision": "v0.1.2",
+  "ranges": {
+    "阶段 C：0–99（含定向修复）": {
+      "count": 100,
+      "correct": 49,
+      "miss": 38,
+      "wrong": 13,
+      "judge_errors": 0,
+      "truthfulness_score": 0.36,
+      "coverage": 0.62,
+      "answered_accuracy": 0.7903
+    },
+    "阶段 D 新增：100–199": {
+      "count": 100,
+      "correct": 32,
+      "miss": 45,
+      "wrong": 23,
+      "judge_errors": 0,
+      "truthfulness_score": 0.09,
+      "coverage": 0.55,
+      "answered_accuracy": 0.5818
+    },
+    "开发集：0–199": {
+      "count": 200,
+      "correct": 81,
+      "miss": 83,
+      "wrong": 36,
+      "judge_errors": 0,
+      "truthfulness_score": 0.225,
+      "coverage": 0.585,
+      "answered_accuracy": 0.6923
+    },
+    "冻结盲测集：200–1937": {
+      "count": 1738,
+      "correct": 536,
+      "miss": 683,
+      "wrong": 519,
+      "judge_errors": 0,
+      "truthfulness_score": 0.0098,
+      "coverage": 0.607,
+      "answered_accuracy": 0.5081
+    },
+    "完整 validation：0–1937": {
+      "count": 1938,
+      "correct": 617,
+      "miss": 766,
+      "wrong": 555,
+      "judge_errors": 0,
+      "truthfulness_score": 0.032,
+      "coverage": 0.6047,
+      "answered_accuracy": 0.5265
+    }
+  },
+  "groups": {
+    "image_source": {
+      "egocentric": {
+        "count": 1423,
+        "correct": 461,
+        "miss": 557,
+        "wrong": 405,
+        "judge_errors": 0,
+        "truthfulness_score": 0.0394,
+        "coverage": 0.6086,
+        "answered_accuracy": 0.5323
+      },
+      "web": {
+        "count": 515,
+        "correct": 156,
+        "miss": 209,
+        "wrong": 150,
+        "judge_errors": 0,
+        "truthfulness_score": 0.0117,
+        "coverage": 0.5942,
+        "answered_accuracy": 0.5098
+      }
+    },
+    "domain": {
+      "9": {
+        "count": 268,
+        "correct": 70,
+        "miss": 121,
+        "wrong": 77,
+        "judge_errors": 0,
+        "truthfulness_score": -0.0261,
+        "coverage": 0.5485,
+        "answered_accuracy": 0.4762
+      },
+      "6": {
+        "count": 236,
+        "correct": 89,
+        "miss": 77,
+        "wrong": 70,
+        "judge_errors": 0,
+        "truthfulness_score": 0.0805,
+        "coverage": 0.6737,
+        "answered_accuracy": 0.5597
+      },
+      "8": {
+        "count": 276,
+        "correct": 87,
+        "miss": 133,
+        "wrong": 56,
+        "judge_errors": 0,
+        "truthfulness_score": 0.1123,
+        "coverage": 0.5181,
+        "answered_accuracy": 0.6084
+      },
+      "4": {
+        "count": 166,
+        "correct": 59,
+        "miss": 62,
+        "wrong": 45,
+        "judge_errors": 0,
+        "truthfulness_score": 0.0843,
+        "coverage": 0.6265,
+        "answered_accuracy": 0.5673
+      },
+      "3": {
+        "count": 163,
+        "correct": 60,
+        "miss": 53,
+        "wrong": 50,
+        "judge_errors": 0,
+        "truthfulness_score": 0.0613,
+        "coverage": 0.6748,
+        "answered_accuracy": 0.5455
+      },
+      "5": {
+        "count": 307,
+        "correct": 70,
+        "miss": 128,
+        "wrong": 109,
+        "judge_errors": 0,
+        "truthfulness_score": -0.127,
+        "coverage": 0.5831,
+        "answered_accuracy": 0.3911
+      },
+      "12": {
+        "count": 161,
+        "correct": 49,
+        "miss": 54,
+        "wrong": 58,
+        "judge_errors": 0,
+        "truthfulness_score": -0.0559,
+        "coverage": 0.6646,
+        "answered_accuracy": 0.4579
+      },
+      "10": {
+        "count": 123,
+        "correct": 48,
+        "miss": 42,
+        "wrong": 33,
+        "judge_errors": 0,
+        "truthfulness_score": 0.122,
+        "coverage": 0.6585,
+        "answered_accuracy": 0.5926
+      },
+      "2": {
+        "count": 63,
+        "correct": 24,
+        "miss": 28,
+        "wrong": 11,
+        "judge_errors": 0,
+        "truthfulness_score": 0.2063,
+        "coverage": 0.5556,
+        "answered_accuracy": 0.6857
+      },
+      "11": {
+        "count": 131,
+        "correct": 50,
+        "miss": 44,
+        "wrong": 37,
+        "judge_errors": 0,
+        "truthfulness_score": 0.0992,
+        "coverage": 0.6641,
+        "answered_accuracy": 0.5747
+      },
+      "1": {
+        "count": 44,
+        "correct": 11,
+        "miss": 24,
+        "wrong": 9,
+        "judge_errors": 0,
+        "truthfulness_score": 0.0455,
+        "coverage": 0.4545,
+        "answered_accuracy": 0.55
+      }
+    },
+    "query_category": {
+      "0": {
+        "count": 220,
+        "correct": 84,
+        "miss": 88,
+        "wrong": 48,
+        "judge_errors": 0,
+        "truthfulness_score": 0.1636,
+        "coverage": 0.6,
+        "answered_accuracy": 0.6364
+      },
+      "5": {
+        "count": 321,
+        "correct": 74,
+        "miss": 156,
+        "wrong": 91,
+        "judge_errors": 0,
+        "truthfulness_score": -0.053,
+        "coverage": 0.514,
+        "answered_accuracy": 0.4485
+      },
+      "4": {
+        "count": 729,
+        "correct": 248,
+        "miss": 294,
+        "wrong": 187,
+        "judge_errors": 0,
+        "truthfulness_score": 0.0837,
+        "coverage": 0.5967,
+        "answered_accuracy": 0.5701
+      },
+      "2": {
+        "count": 223,
+        "correct": 38,
+        "miss": 76,
+        "wrong": 109,
+        "judge_errors": 0,
+        "truthfulness_score": -0.3184,
+        "coverage": 0.6592,
+        "answered_accuracy": 0.2585
+      },
+      "1": {
+        "count": 313,
+        "correct": 105,
+        "miss": 108,
+        "wrong": 100,
+        "judge_errors": 0,
+        "truthfulness_score": 0.016,
+        "coverage": 0.655,
+        "answered_accuracy": 0.5122
+      },
+      "3": {
+        "count": 132,
+        "correct": 68,
+        "miss": 44,
+        "wrong": 20,
+        "judge_errors": 0,
+        "truthfulness_score": 0.3636,
+        "coverage": 0.6667,
+        "answered_accuracy": 0.7727
+      }
+    },
+    "dynamism": {
+      "0": {
+        "count": 1559,
+        "correct": 536,
+        "miss": 581,
+        "wrong": 442,
+        "judge_errors": 0,
+        "truthfulness_score": 0.0603,
+        "coverage": 0.6273,
+        "answered_accuracy": 0.5481
+      },
+      "3": {
+        "count": 309,
+        "correct": 70,
+        "miss": 146,
+        "wrong": 93,
+        "judge_errors": 0,
+        "truthfulness_score": -0.0744,
+        "coverage": 0.5275,
+        "answered_accuracy": 0.4294
+      },
+      "1": {
+        "count": 67,
+        "correct": 10,
+        "miss": 37,
+        "wrong": 20,
+        "judge_errors": 0,
+        "truthfulness_score": -0.1493,
+        "coverage": 0.4478,
+        "answered_accuracy": 0.3333
+      },
+      "2": {
+        "count": 3,
+        "correct": 1,
+        "miss": 2,
+        "wrong": 0,
+        "judge_errors": 0,
+        "truthfulness_score": 0.3333,
+        "coverage": 0.3333,
+        "answered_accuracy": 1.0
+      }
+    },
+    "image_quality": {
+      "1": {
+        "count": 80,
+        "correct": 31,
+        "miss": 29,
+        "wrong": 20,
+        "judge_errors": 0,
+        "truthfulness_score": 0.1375,
+        "coverage": 0.6375,
+        "answered_accuracy": 0.6078
+      },
+      "0": {
+        "count": 1631,
+        "correct": 522,
+        "miss": 638,
+        "wrong": 471,
+        "judge_errors": 0,
+        "truthfulness_score": 0.0313,
+        "coverage": 0.6088,
+        "answered_accuracy": 0.5257
+      },
+      "5": {
+        "count": 100,
+        "correct": 33,
+        "miss": 41,
+        "wrong": 26,
+        "judge_errors": 0,
+        "truthfulness_score": 0.07,
+        "coverage": 0.59,
+        "answered_accuracy": 0.5593
+      },
+      "4": {
+        "count": 36,
+        "correct": 9,
+        "miss": 18,
+        "wrong": 9,
+        "judge_errors": 0,
+        "truthfulness_score": 0.0,
+        "coverage": 0.5,
+        "answered_accuracy": 0.5
+      },
+      "3": {
+        "count": 31,
+        "correct": 11,
+        "miss": 12,
+        "wrong": 8,
+        "judge_errors": 0,
+        "truthfulness_score": 0.0968,
+        "coverage": 0.6129,
+        "answered_accuracy": 0.5789
+      },
+      "2": {
+        "count": 60,
+        "correct": 11,
+        "miss": 28,
+        "wrong": 21,
+        "judge_errors": 0,
+        "truthfulness_score": -0.1667,
+        "coverage": 0.5333,
+        "answered_accuracy": 0.3438
+      }
+    }
+  },
+  "proxy_metrics": {
+    "count": 1938,
+    "abstention_count": 766,
+    "abstention_rate": 0.3953,
+    "entity_rewrite_count": 984,
+    "entity_rewrite_rate": 0.5077,
+    "mean_token_f1": 0.2408,
+    "mean_retrieval_seconds": 0.0808,
+    "mean_generation_seconds": 1.5697
+  },
+  "evidence_audit_experiment": {
+    "correct_answered": 32,
+    "wrong_answered": 23,
+    "correct_kept": 14,
+    "wrong_kept": 1,
+    "kept_count": 15
+  },
+  "artifacts": {
+    "results": "artifacts\\crag_v0.1.2_full_blind_cloud\\results_full_1938.json",
+    "results_sha256": "7c247b829421e6931b0fb31ffa5c6b270efb859e7556ec4cf6056cc53e68cb54",
+    "judgments": "artifacts\\crag_v0.1.2_full_blind_cloud\\deepseek_flash_judgments_full_1938.json",
+    "judgments_sha256": "814424af325e45fdb72f8cf196beb4f43e99efd63b6bc835cca9c8d3e14507da"
+  }
+}

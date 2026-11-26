@@ -29,10 +29,12 @@ load_dotenv()
 # 在导入任何 HF 库之前设置分词器并行选项
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", None)
+DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", None)
+EVAL_API_KEY = os.environ.get("EVAL_API_KEY", None)
 
 
 from example_agents.user_config import get_agent_from_model_name
-from cragmm_search.search import UnifiedSearchPipeline
+from utils.search_pipeline_compat import UnifiedSearchPipeline
 from datasets import load_dataset
 from evaluation import CRAGEvaluator, DEFAULT_EVAL_MODEL, DEFAULT_NUM_WORKERS
 
@@ -146,6 +148,12 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--eval-base-url",
+        type=str,
+        default=os.environ.get("EVAL_BASE_URL"),
+        help="Optional OpenAI-compatible evaluation API base URL.",
+    )
+    parser.add_argument(
         "--output-dir",
         type=str,
         default="./results",
@@ -201,6 +209,12 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    eval_api_key = EVAL_API_KEY or OPENAI_API_KEY
+    if args.eval_model.lower().startswith("deepseek"):
+        eval_api_key = EVAL_API_KEY or DEEPSEEK_API_KEY
+        if not args.eval_base_url:
+            args.eval_base_url = "https://api.deepseek.com"
+
     # 若输出目录不存在，则创建
     os.makedirs(args.output_dir, exist_ok=True)
 
@@ -220,8 +234,12 @@ def main() -> None:
         return
 
     if args.mode != "generate":
-        if OPENAI_API_KEY is None:
-            raise ValueError("OPENAI_API_KEY environment variable is not set!")
+        if args.eval_model.lower() != "none" and eval_api_key is None:
+            raise ValueError(
+                "Evaluation API key is not set. Use DEEPSEEK_API_KEY for a"
+                " DeepSeek judge, OPENAI_API_KEY for OpenAI, or EVAL_API_KEY"
+                " for a custom OpenAI-compatible endpoint."
+            )
 
     # 在仅评测模式下，无需加载数据集或初始化智能体
     if args.mode == "evaluate":
@@ -235,7 +253,8 @@ def main() -> None:
             dataset=None,
             agent=None,
             eval_model_name=args.eval_model,
-            eval_api_key=OPENAI_API_KEY,
+            eval_api_key=eval_api_key,
+            eval_base_url=args.eval_base_url,
             num_conversations=None,
             show_progress=not args.no_progress,
             num_workers=args.num_workers,
@@ -310,7 +329,8 @@ def main() -> None:
         web_search=not args.suppress_web_search_api,
         search_pipeline=search_pipeline,
         eval_model_name=args.eval_model,
-        eval_api_key=OPENAI_API_KEY,
+        eval_api_key=eval_api_key,
+        eval_base_url=args.eval_base_url,
         num_conversations=args.num_conversations,
         show_progress=not args.no_progress,
         num_workers=args.num_workers,

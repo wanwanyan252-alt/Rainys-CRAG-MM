@@ -1,0 +1,6 @@
+# Linux/CUDA environment for open-source VLM agents.
+-r requirements-local.txt
+
+vllm==0.10.1.1
+mistral_common
+qwen_vl_utils

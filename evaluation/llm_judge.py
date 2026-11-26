@@ -25,7 +25,9 @@ console = Console()
 class LLMJudge:
     """用于智能体回答语义评测的 LLM-as-a-Judge。"""
 
-    def __init__(self, api_key: str, model_name: str):
+    def __init__(
+        self, api_key: str, model_name: str, base_url: str | None = None
+    ):
         """初始化 LLM 裁判。
 
         参数:
@@ -34,7 +36,16 @@ class LLMJudge:
         """
         self.api_key = api_key
         self.model_name = model_name
-        self.client = OpenAI(api_key=api_key)
+        self.base_url = base_url
+        self.request_extra_body = (
+            {"thinking": {"type": "disabled"}}
+            if base_url and "api.deepseek.com" in base_url
+            else None
+        )
+        client_kwargs = {"api_key": api_key}
+        if base_url:
+            client_kwargs["base_url"] = base_url
+        self.client = OpenAI(**client_kwargs)
         self.prompt = CRAGMultiModalPrompts()
 
     def get_system_message(self) -> str:
@@ -89,12 +100,15 @@ class LLMJudge:
         """
         for attempt in range(max_retries):
             try:
-                completion = self.client.chat.completions.create(
+                request_kwargs = dict(
                     model=self.model_name,
                     messages=messages,
                     temperature=0.0,
                     max_tokens=MAX_EVAL_TOKENS,
                 )
+                if self.request_extra_body:
+                    request_kwargs["extra_body"] = self.request_extra_body
+                completion = self.client.chat.completions.create(**request_kwargs)
                 eval_result = completion.choices[0].message.content
                 is_correct, reason = self.parse_response(eval_result)
                 return {"accuracy": is_correct, "eval_result": reason}

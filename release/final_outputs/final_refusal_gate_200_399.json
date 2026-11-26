@@ -1,0 +1,2744 @@
+{
+  "feature_names": [
+    "has_entity",
+    "entity_token_count",
+    "observed_entity_count",
+    "observed_unique_count",
+    "selected_support_count",
+    "selected_full_support",
+    "selected_candidate_match",
+    "selected_candidate_max_score",
+    "selected_candidate_max_occurrences",
+    "entity_in_response",
+    "entity_in_web",
+    "query_in_web",
+    "response_in_web",
+    "response_in_rag",
+    "response_word_count",
+    "response_sentence_count",
+    "response_number_count",
+    "query_number_count",
+    "rag_chars",
+    "web_doc_count",
+    "rewrite_seconds",
+    "retrieval_seconds",
+    "generation_seconds",
+    "web_query_changed",
+    "preliminary_changed",
+    "numeric_checked",
+    "numeric_valid",
+    "contains_hedge",
+    "contains_search_meta",
+    "contains_unknown_language",
+    "deictic_query",
+    "comparison_query",
+    "query_has_superlative",
+    "response_starts_yes",
+    "response_starts_no",
+    "qprefix_who",
+    "qprefix_what",
+    "qprefix_when",
+    "qprefix_where",
+    "qprefix_which",
+    "qprefix_how_many",
+    "qprefix_how_much",
+    "qprefix_how_long",
+    "qprefix_how_often",
+    "qprefix_is",
+    "qprefix_are",
+    "qprefix_does",
+    "qprefix_do",
+    "qprefix_did",
+    "qprefix_can",
+    "qprefix_was",
+    "qprefix_were",
+    "has_visible_text",
+    "visible_text_token_count",
+    "entity_consistency_valid",
+    "web_retrieval_routed",
+    "confidence_high",
+    "confidence_low",
+    "route_identity",
+    "route_visual",
+    "route_ocr",
+    "route_lookup",
+    "route_comparison",
+    "route_chart"
+  ],
+  "dev_start": 200,
+  "dev_count": 200,
+  "dev_trained_threshold": 0.63,
+  "baseline": {
+    "dev": {
+      "count": 200,
+      "correct": 96,
+      "miss": 33,
+      "wrong": 71,
+      "truthfulness": 0.125,
+      "coverage": 0.835,
+      "answered_accuracy": 0.5749
+    },
+    "non_dev": {
+      "count": 200,
+      "correct": 89,
+      "miss": 34,
+      "wrong": 77,
+      "truthfulness": 0.06,
+      "coverage": 0.83,
+      "answered_accuracy": 0.5361
+    },
+    "full": {
+      "count": 400,
+      "correct": 185,
+      "miss": 67,
+      "wrong": 148,
+      "truthfulness": 0.0925,
+      "coverage": 0.8325,
+      "answered_accuracy": 0.5556
+    }
+  },
+  "dev_trained_gate": {
+    "tuned_dev": {
+      "count": 200,
+      "correct": 65,
+      "miss": 123,
+      "wrong": 12,
+      "truthfulness": 0.265,
+      "coverage": 0.385,
+      "answered_accuracy": 0.8442
+    },
+    "non_dev": {
+      "count": 200,
+      "correct": 56,
+      "miss": 111,
+      "wrong": 33,
+      "truthfulness": 0.115,
+      "coverage": 0.445,
+      "answered_accuracy": 0.6292
+    },
+    "full": {
+      "count": 400,
+      "correct": 121,
+      "miss": 234,
+      "wrong": 45,
+      "truthfulness": 0.19,
+      "coverage": 0.415,
+      "answered_accuracy": 0.7289
+    }
+  },
+  "five_fold_oof_potential": {
+    "threshold": 0.33999999999999997,
+    "full": {
+      "count": 400,
+      "correct": 155,
+      "miss": 152,
+      "wrong": 93,
+      "truthfulness": 0.155,
+      "coverage": 0.62,
+      "answered_accuracy": 0.625
+    }
+  },
+  "model": {
+    "mean": [
+      0.562874251497006,
+      0.9700598802395209,
+      1.3892215568862276,
+      1.0479041916167664,
+      0.9041916167664671,
+      0.49101796407185627,
+      0.2874251497005988,
+      0.2046766467065868,
+      0.49101796407185627,
+      0.3702594810379241,
+      0.48952095808383234,
+      0.7879407850964737,
+      0.844299206021599,
+      0.9053099405646169,
+      13.844311377245509,
+      1.095808383233533,
+      0.39520958083832336,
+      0.07784431137724551,
+      0.7091686626746505,
+      4.62874251497006,
+      0.12219790419161684,
+      0.2237574850299402,
+      0.16019760479041922,
+      0.5868263473053892,
+      0.0,
+      1.0,
+      1.0,
+      0.005988023952095809,
+      0.0,
+      0.0,
+      0.844311377245509,
+      0.017964071856287425,
+      0.0658682634730539,
+      0.1317365269461078,
+      0.05389221556886228,
+      0.05389221556886228,
+      0.3413173652694611,
+      0.05389221556886228,
+      0.08383233532934131,
+      0.029940119760479042,
+      0.029940119760479042,
+      0.023952095808383235,
+      0.017964071856287425,
+      0.005988023952095809,
+      0.05389221556886228,
+      0.041916167664670656,
+      0.03592814371257485,
+      0.017964071856287425,
+      0.017964071856287425,
+      0.03592814371257485,
+      0.005988023952095809,
+      0.0,
+      0.0718562874251497,
+      0.23952095808383234,
+      0.562874251497006,
+      1.0,
+      0.7125748502994012,
+      0.1377245508982036,
+      0.011976047904191617,
+      0.562874251497006,
+      0.11377245508982035,
+      0.2694610778443114,
+      0.029940119760479042,
+      0.011976047904191617
+    ],
+    "scale": [
+      0.4960310761421012,
+      1.0577637109821096,
+      0.682109263037036,
+      0.5226416460845349,
+      0.8770768880061939,
+      0.4999193165207616,
+      0.45256152401655514,
+      0.32457836804003687,
+      1.193135372722377,
+      0.4593963168294128,
+      0.4927265075449116,
+      0.26020010120208403,
+      0.20827306825566083,
+      0.15208843755780643,
+      8.476085448236033,
+      0.39810227876873455,
+      0.7657181970369238,
+      0.4093811888655619,
+      0.12344764485656816,
+      0.7541582765948729,
+      0.031215217458746124,
+      0.08011991118645369,
+      0.04556214411437306,
+      0.49240347827122855,
+      1.0,
+      1.0,
+      1.0,
+      0.0771502917767972,
+      1.0,
+      1.0,
+      0.36255989229270874,
+      0.13282079648394501,
+      0.24805167876895823,
+      0.3382041017112085,
+      0.225804881855866,
+      0.2258048818558658,
+      0.47415168610369224,
+      0.22580488185586625,
+      0.27713620276421874,
+      0.170422149350392,
+      0.17042214935039185,
+      0.15289994412938585,
+      0.1328207964839451,
+      0.07715029177679716,
+      0.2258048818558661,
+      0.20039761114588664,
+      0.18611102117269526,
+      0.13282079648394493,
+      0.13282079648394512,
+      0.18611102117269526,
+      0.0771502917767973,
+      1.0,
+      0.2582498042257227,
+      0.942728749466007,
+      0.4960310761421012,
+      1.0,
+      0.4525615240165552,
+      0.3446106483817522,
+      0.10877785703344289,
+      0.49603107614210123,
+      0.3175346966122841,
+      0.4436798455770704,
+      0.17042214935039166,
+      0.10877785703344282
+    ],
+    "weights": [
+      0.5485212224065703,
+      -0.4295665381910916,
+      -0.06249443224917664,
+      0.3093481141059615,
+      0.07479563570969527,
+      -0.04692912652124636,
+      0.2920055140601478,
+      -0.6454000908641667,
+      0.15660376296008638,
+      0.5689443031434083,
+      -0.5025143518200432,
+      1.1672041017956427,
+      0.17498928701074698,
+      0.08902180266101453,
+      -0.06070422128915837,
+      0.3753923082752395,
+      0.2655456453113332,
+      0.3662828968710475,
+      0.5100144573168077,
+      -0.03673613284675805,
+      0.4688853633583369,
+      -0.287888328127847,
+      -0.11491445372301337,
+      -0.6551411145936352,
+      0.120213527857247,
+      0.0,
+      0.0,
+      0.0,
+      0.18680156553499636,
+      0.0,
+      0.0,
+      -0.028651939951884715,
+      0.25356895892136116,
+      -0.04460760202373009,
+      0.14522623949095345,
+      -0.16199750679266173,
+      -0.46043500874009996,
+      -0.2841993239394006,
+      -0.0998440072332366,
+      -0.1231217711477377,
+      0.08721361381705485,
+      -0.5029723088795552,
+      -0.562700880507878,
+      -0.3393213448837672,
+      0.27918428558267566,
+      0.023652756363052314,
+      -0.25977211058079286,
+      -0.2891656198022179,
+      0.4511597524598418,
+      -0.6647480257414391,
+      0.17500461467937095,
+      0.3634569023572196,
+      0.0,
+      0.010061354959545004,
+      0.09000725708391961,
+      -0.4295665381910916,
+      0.0,
+      -0.1618504334705194,
+      0.28782042069257185,
+      0.019324285791790644,
+      0.21142332157755275,
+      -0.17877452988451364,
+      -0.320971108015605,
+      0.7937863887775432,
+      -0.39601668986866634
+    ]
+  },
+  "predictions": [
+    {
+      "position": 200,
+      "original_score": -1,
+      "probability_correct": 0.074498,
+      "keep": false
+    },
+    {
+      "position": 201,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 202,
+      "original_score": 1,
+      "probability_correct": 0.923856,
+      "keep": true
+    },
+    {
+      "position": 203,
+      "original_score": -1,
+      "probability_correct": 0.199814,
+      "keep": false
+    },
+    {
+      "position": 204,
+      "original_score": 1,
+      "probability_correct": 0.956846,
+      "keep": true
+    },
+    {
+      "position": 205,
+      "original_score": 1,
+      "probability_correct": 0.599396,
+      "keep": false
+    },
+    {
+      "position": 206,
+      "original_score": 1,
+      "probability_correct": 0.484411,
+      "keep": false
+    },
+    {
+      "position": 207,
+      "original_score": -1,
+      "probability_correct": 0.070236,
+      "keep": false
+    },
+    {
+      "position": 208,
+      "original_score": 1,
+      "probability_correct": 0.710857,
+      "keep": true
+    },
+    {
+      "position": 209,
+      "original_score": -1,
+      "probability_correct": 0.642042,
+      "keep": true
+    },
+    {
+      "position": 210,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 211,
+      "original_score": -1,
+      "probability_correct": 0.58958,
+      "keep": false
+    },
+    {
+      "position": 212,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 213,
+      "original_score": 1,
+      "probability_correct": 0.79646,
+      "keep": true
+    },
+    {
+      "position": 214,
+      "original_score": 1,
+      "probability_correct": 0.734833,
+      "keep": true
+    },
+    {
+      "position": 215,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 216,
+      "original_score": 1,
+      "probability_correct": 0.444812,
+      "keep": false
+    },
+    {
+      "position": 217,
+      "original_score": -1,
+      "probability_correct": 0.71222,
+      "keep": true
+    },
+    {
+      "position": 218,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 219,
+      "original_score": -1,
+      "probability_correct": 0.726933,
+      "keep": true
+    },
+    {
+      "position": 220,
+      "original_score": 1,
+      "probability_correct": 0.367267,
+      "keep": false
+    },
+    {
+      "position": 221,
+      "original_score": -1,
+      "probability_correct": 0.3422,
+      "keep": false
+    },
+    {
+      "position": 222,
+      "original_score": 1,
+      "probability_correct": 0.183878,
+      "keep": false
+    },
+    {
+      "position": 223,
+      "original_score": -1,
+      "probability_correct": 0.230522,
+      "keep": false
+    },
+    {
+      "position": 224,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 225,
+      "original_score": 1,
+      "probability_correct": 0.624682,
+      "keep": false
+    },
+    {
+      "position": 226,
+      "original_score": -1,
+      "probability_correct": 0.135565,
+      "keep": false
+    },
+    {
+      "position": 227,
+      "original_score": 1,
+      "probability_correct": 0.975736,
+      "keep": true
+    },
+    {
+      "position": 228,
+      "original_score": 1,
+      "probability_correct": 0.927456,
+      "keep": true
+    },
+    {
+      "position": 229,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 230,
+      "original_score": -1,
+      "probability_correct": 0.473796,
+      "keep": false
+    },
+    {
+      "position": 231,
+      "original_score": -1,
+      "probability_correct": 0.56992,
+      "keep": false
+    },
+    {
+      "position": 232,
+      "original_score": 1,
+      "probability_correct": 0.857247,
+      "keep": true
+    },
+    {
+      "position": 233,
+      "original_score": 1,
+      "probability_correct": 0.331368,
+      "keep": false
+    },
+    {
+      "position": 234,
+      "original_score": 1,
+      "probability_correct": 0.996793,
+      "keep": true
+    },
+    {
+      "position": 235,
+      "original_score": 1,
+      "probability_correct": 0.999027,
+      "keep": true
+    },
+    {
+      "position": 236,
+      "original_score": 1,
+      "probability_correct": 0.757918,
+      "keep": true
+    },
+    {
+      "position": 237,
+      "original_score": -1,
+      "probability_correct": 0.467662,
+      "keep": false
+    },
+    {
+      "position": 238,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 239,
+      "original_score": -1,
+      "probability_correct": 0.521636,
+      "keep": false
+    },
+    {
+      "position": 240,
+      "original_score": 1,
+      "probability_correct": 0.272742,
+      "keep": false
+    },
+    {
+      "position": 241,
+      "original_score": 1,
+      "probability_correct": 0.725404,
+      "keep": true
+    },
+    {
+      "position": 242,
+      "original_score": 1,
+      "probability_correct": 0.521026,
+      "keep": false
+    },
+    {
+      "position": 243,
+      "original_score": 1,
+      "probability_correct": 0.663454,
+      "keep": true
+    },
+    {
+      "position": 244,
+      "original_score": 1,
+      "probability_correct": 0.777469,
+      "keep": true
+    },
+    {
+      "position": 245,
+      "original_score": 1,
+      "probability_correct": 0.84101,
+      "keep": true
+    },
+    {
+      "position": 246,
+      "original_score": -1,
+      "probability_correct": 0.22863,
+      "keep": false
+    },
+    {
+      "position": 247,
+      "original_score": 1,
+      "probability_correct": 0.295299,
+      "keep": false
+    },
+    {
+      "position": 248,
+      "original_score": 1,
+      "probability_correct": 0.865177,
+      "keep": true
+    },
+    {
+      "position": 249,
+      "original_score": -1,
+      "probability_correct": 0.551442,
+      "keep": false
+    },
+    {
+      "position": 250,
+      "original_score": 1,
+      "probability_correct": 0.829855,
+      "keep": true
+    },
+    {
+      "position": 251,
+      "original_score": 1,
+      "probability_correct": 0.538772,
+      "keep": false
+    },
+    {
+      "position": 252,
+      "original_score": -1,
+      "probability_correct": 0.408357,
+      "keep": false
+    },
+    {
+      "position": 253,
+      "original_score": 1,
+      "probability_correct": 0.864822,
+      "keep": true
+    },
+    {
+      "position": 254,
+      "original_score": 1,
+      "probability_correct": 0.75636,
+      "keep": true
+    },
+    {
+      "position": 255,
+      "original_score": -1,
+      "probability_correct": 0.324227,
+      "keep": false
+    },
+    {
+      "position": 256,
+      "original_score": 1,
+      "probability_correct": 0.896863,
+      "keep": true
+    },
+    {
+      "position": 257,
+      "original_score": 1,
+      "probability_correct": 0.670223,
+      "keep": true
+    },
+    {
+      "position": 258,
+      "original_score": 1,
+      "probability_correct": 0.760158,
+      "keep": true
+    },
+    {
+      "position": 259,
+      "original_score": -1,
+      "probability_correct": 0.364393,
+      "keep": false
+    },
+    {
+      "position": 260,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 261,
+      "original_score": 1,
+      "probability_correct": 0.908245,
+      "keep": true
+    },
+    {
+      "position": 262,
+      "original_score": 1,
+      "probability_correct": 0.872767,
+      "keep": true
+    },
+    {
+      "position": 263,
+      "original_score": -1,
+      "probability_correct": 0.380042,
+      "keep": false
+    },
+    {
+      "position": 264,
+      "original_score": 1,
+      "probability_correct": 0.608765,
+      "keep": false
+    },
+    {
+      "position": 265,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 266,
+      "original_score": -1,
+      "probability_correct": 0.444178,
+      "keep": false
+    },
+    {
+      "position": 267,
+      "original_score": 1,
+      "probability_correct": 0.707773,
+      "keep": true
+    },
+    {
+      "position": 268,
+      "original_score": -1,
+      "probability_correct": 0.478766,
+      "keep": false
+    },
+    {
+      "position": 269,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 270,
+      "original_score": -1,
+      "probability_correct": 0.745609,
+      "keep": true
+    },
+    {
+      "position": 271,
+      "original_score": -1,
+      "probability_correct": 0.163106,
+      "keep": false
+    },
+    {
+      "position": 272,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 273,
+      "original_score": 1,
+      "probability_correct": 0.771318,
+      "keep": true
+    },
+    {
+      "position": 274,
+      "original_score": 1,
+      "probability_correct": 0.339329,
+      "keep": false
+    },
+    {
+      "position": 275,
+      "original_score": 1,
+      "probability_correct": 0.999213,
+      "keep": true
+    },
+    {
+      "position": 276,
+      "original_score": 1,
+      "probability_correct": 0.71058,
+      "keep": true
+    },
+    {
+      "position": 277,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 278,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 279,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 280,
+      "original_score": -1,
+      "probability_correct": 0.078764,
+      "keep": false
+    },
+    {
+      "position": 281,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 282,
+      "original_score": -1,
+      "probability_correct": 0.279007,
+      "keep": false
+    },
+    {
+      "position": 283,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 284,
+      "original_score": 1,
+      "probability_correct": 0.839948,
+      "keep": true
+    },
+    {
+      "position": 285,
+      "original_score": 1,
+      "probability_correct": 0.756349,
+      "keep": true
+    },
+    {
+      "position": 286,
+      "original_score": -1,
+      "probability_correct": 0.726354,
+      "keep": true
+    },
+    {
+      "position": 287,
+      "original_score": 1,
+      "probability_correct": 0.989101,
+      "keep": true
+    },
+    {
+      "position": 288,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 289,
+      "original_score": 1,
+      "probability_correct": 0.95837,
+      "keep": true
+    },
+    {
+      "position": 290,
+      "original_score": 1,
+      "probability_correct": 0.961254,
+      "keep": true
+    },
+    {
+      "position": 291,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 292,
+      "original_score": -1,
+      "probability_correct": 0.615128,
+      "keep": false
+    },
+    {
+      "position": 293,
+      "original_score": 1,
+      "probability_correct": 0.66695,
+      "keep": true
+    },
+    {
+      "position": 294,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 295,
+      "original_score": -1,
+      "probability_correct": 0.552642,
+      "keep": false
+    },
+    {
+      "position": 296,
+      "original_score": -1,
+      "probability_correct": 0.555458,
+      "keep": false
+    },
+    {
+      "position": 297,
+      "original_score": 1,
+      "probability_correct": 0.849989,
+      "keep": true
+    },
+    {
+      "position": 298,
+      "original_score": -1,
+      "probability_correct": 0.276792,
+      "keep": false
+    },
+    {
+      "position": 299,
+      "original_score": -1,
+      "probability_correct": 0.735649,
+      "keep": true
+    },
+    {
+      "position": 300,
+      "original_score": 1,
+      "probability_correct": 0.781883,
+      "keep": true
+    },
+    {
+      "position": 301,
+      "original_score": 1,
+      "probability_correct": 0.931912,
+      "keep": true
+    },
+    {
+      "position": 302,
+      "original_score": -1,
+      "probability_correct": 0.108365,
+      "keep": false
+    },
+    {
+      "position": 303,
+      "original_score": 1,
+      "probability_correct": 0.330081,
+      "keep": false
+    },
+    {
+      "position": 304,
+      "original_score": 1,
+      "probability_correct": 0.901089,
+      "keep": true
+    },
+    {
+      "position": 305,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 306,
+      "original_score": -1,
+      "probability_correct": 0.640817,
+      "keep": true
+    },
+    {
+      "position": 307,
+      "original_score": 1,
+      "probability_correct": 0.248716,
+      "keep": false
+    },
+    {
+      "position": 308,
+      "original_score": 1,
+      "probability_correct": 0.564295,
+      "keep": false
+    },
+    {
+      "position": 309,
+      "original_score": -1,
+      "probability_correct": 0.113308,
+      "keep": false
+    },
+    {
+      "position": 310,
+      "original_score": 1,
+      "probability_correct": 0.641256,
+      "keep": true
+    },
+    {
+      "position": 311,
+      "original_score": 1,
+      "probability_correct": 0.823685,
+      "keep": true
+    },
+    {
+      "position": 312,
+      "original_score": 1,
+      "probability_correct": 0.809087,
+      "keep": true
+    },
+    {
+      "position": 313,
+      "original_score": 1,
+      "probability_correct": 0.716932,
+      "keep": true
+    },
+    {
+      "position": 314,
+      "original_score": -1,
+      "probability_correct": 0.211504,
+      "keep": false
+    },
+    {
+      "position": 315,
+      "original_score": 1,
+      "probability_correct": 0.490675,
+      "keep": false
+    },
+    {
+      "position": 316,
+      "original_score": -1,
+      "probability_correct": 0.663202,
+      "keep": true
+    },
+    {
+      "position": 317,
+      "original_score": 1,
+      "probability_correct": 0.518892,
+      "keep": false
+    },
+    {
+      "position": 318,
+      "original_score": 1,
+      "probability_correct": 0.519323,
+      "keep": false
+    },
+    {
+      "position": 319,
+      "original_score": 1,
+      "probability_correct": 0.496409,
+      "keep": false
+    },
+    {
+      "position": 320,
+      "original_score": 1,
+      "probability_correct": 0.719856,
+      "keep": true
+    },
+    {
+      "position": 321,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 322,
+      "original_score": 1,
+      "probability_correct": 0.90246,
+      "keep": true
+    },
+    {
+      "position": 323,
+      "original_score": 1,
+      "probability_correct": 0.478579,
+      "keep": false
+    },
+    {
+      "position": 324,
+      "original_score": -1,
+      "probability_correct": 0.003421,
+      "keep": false
+    },
+    {
+      "position": 325,
+      "original_score": 1,
+      "probability_correct": 0.572176,
+      "keep": false
+    },
+    {
+      "position": 326,
+      "original_score": -1,
+      "probability_correct": 0.084349,
+      "keep": false
+    },
+    {
+      "position": 327,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 328,
+      "original_score": -1,
+      "probability_correct": 0.627743,
+      "keep": false
+    },
+    {
+      "position": 329,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 330,
+      "original_score": -1,
+      "probability_correct": 0.576671,
+      "keep": false
+    },
+    {
+      "position": 331,
+      "original_score": 1,
+      "probability_correct": 0.70689,
+      "keep": true
+    },
+    {
+      "position": 332,
+      "original_score": 1,
+      "probability_correct": 0.584061,
+      "keep": false
+    },
+    {
+      "position": 333,
+      "original_score": -1,
+      "probability_correct": 0.246226,
+      "keep": false
+    },
+    {
+      "position": 334,
+      "original_score": 1,
+      "probability_correct": 0.780615,
+      "keep": true
+    },
+    {
+      "position": 335,
+      "original_score": -1,
+      "probability_correct": 0.534411,
+      "keep": false
+    },
+    {
+      "position": 336,
+      "original_score": -1,
+      "probability_correct": 0.136442,
+      "keep": false
+    },
+    {
+      "position": 337,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 338,
+      "original_score": 1,
+      "probability_correct": 0.117162,
+      "keep": false
+    },
+    {
+      "position": 339,
+      "original_score": -1,
+      "probability_correct": 0.72549,
+      "keep": true
+    },
+    {
+      "position": 340,
+      "original_score": -1,
+      "probability_correct": 0.440011,
+      "keep": false
+    },
+    {
+      "position": 341,
+      "original_score": -1,
+      "probability_correct": 0.362267,
+      "keep": false
+    },
+    {
+      "position": 342,
+      "original_score": -1,
+      "probability_correct": 0.60776,
+      "keep": false
+    },
+    {
+      "position": 343,
+      "original_score": -1,
+      "probability_correct": 0.200866,
+      "keep": false
+    },
+    {
+      "position": 344,
+      "original_score": 1,
+      "probability_correct": 0.591195,
+      "keep": false
+    },
+    {
+      "position": 345,
+      "original_score": 1,
+      "probability_correct": 0.637233,
+      "keep": true
+    },
+    {
+      "position": 346,
+      "original_score": -1,
+      "probability_correct": 0.47133,
+      "keep": false
+    },
+    {
+      "position": 347,
+      "original_score": -1,
+      "probability_correct": 0.53191,
+      "keep": false
+    },
+    {
+      "position": 348,
+      "original_score": 1,
+      "probability_correct": 0.705471,
+      "keep": true
+    },
+    {
+      "position": 349,
+      "original_score": 1,
+      "probability_correct": 0.461643,
+      "keep": false
+    },
+    {
+      "position": 350,
+      "original_score": -1,
+      "probability_correct": 0.215929,
+      "keep": false
+    },
+    {
+      "position": 351,
+      "original_score": -1,
+      "probability_correct": 0.063003,
+      "keep": false
+    },
+    {
+      "position": 352,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 353,
+      "original_score": 1,
+      "probability_correct": 0.818917,
+      "keep": true
+    },
+    {
+      "position": 354,
+      "original_score": -1,
+      "probability_correct": 0.731851,
+      "keep": true
+    },
+    {
+      "position": 355,
+      "original_score": 1,
+      "probability_correct": 0.995129,
+      "keep": true
+    },
+    {
+      "position": 356,
+      "original_score": 1,
+      "probability_correct": 0.990499,
+      "keep": true
+    },
+    {
+      "position": 357,
+      "original_score": -1,
+      "probability_correct": 0.588258,
+      "keep": false
+    },
+    {
+      "position": 358,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 359,
+      "original_score": -1,
+      "probability_correct": 0.313793,
+      "keep": false
+    },
+    {
+      "position": 360,
+      "original_score": -1,
+      "probability_correct": 0.554881,
+      "keep": false
+    },
+    {
+      "position": 361,
+      "original_score": 1,
+      "probability_correct": 0.312109,
+      "keep": false
+    },
+    {
+      "position": 362,
+      "original_score": -1,
+      "probability_correct": 0.205007,
+      "keep": false
+    },
+    {
+      "position": 363,
+      "original_score": -1,
+      "probability_correct": 0.238584,
+      "keep": false
+    },
+    {
+      "position": 364,
+      "original_score": -1,
+      "probability_correct": 0.431109,
+      "keep": false
+    },
+    {
+      "position": 365,
+      "original_score": 1,
+      "probability_correct": 0.497001,
+      "keep": false
+    },
+    {
+      "position": 366,
+      "original_score": -1,
+      "probability_correct": 0.34626,
+      "keep": false
+    },
+    {
+      "position": 367,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 368,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 369,
+      "original_score": -1,
+      "probability_correct": 0.598856,
+      "keep": false
+    },
+    {
+      "position": 370,
+      "original_score": 1,
+      "probability_correct": 0.802004,
+      "keep": true
+    },
+    {
+      "position": 371,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 372,
+      "original_score": 1,
+      "probability_correct": 0.999993,
+      "keep": true
+    },
+    {
+      "position": 373,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 374,
+      "original_score": 1,
+      "probability_correct": 0.661899,
+      "keep": true
+    },
+    {
+      "position": 375,
+      "original_score": 1,
+      "probability_correct": 0.731398,
+      "keep": true
+    },
+    {
+      "position": 376,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 377,
+      "original_score": -1,
+      "probability_correct": 0.666446,
+      "keep": true
+    },
+    {
+      "position": 378,
+      "original_score": 1,
+      "probability_correct": 0.878425,
+      "keep": true
+    },
+    {
+      "position": 379,
+      "original_score": 1,
+      "probability_correct": 0.672997,
+      "keep": true
+    },
+    {
+      "position": 380,
+      "original_score": -1,
+      "probability_correct": 0.145929,
+      "keep": false
+    },
+    {
+      "position": 381,
+      "original_score": -1,
+      "probability_correct": 0.357438,
+      "keep": false
+    },
+    {
+      "position": 382,
+      "original_score": -1,
+      "probability_correct": 0.304073,
+      "keep": false
+    },
+    {
+      "position": 383,
+      "original_score": 1,
+      "probability_correct": 0.968329,
+      "keep": true
+    },
+    {
+      "position": 384,
+      "original_score": -1,
+      "probability_correct": 0.5409,
+      "keep": false
+    },
+    {
+      "position": 385,
+      "original_score": 1,
+      "probability_correct": 0.299469,
+      "keep": false
+    },
+    {
+      "position": 386,
+      "original_score": 1,
+      "probability_correct": 0.710555,
+      "keep": true
+    },
+    {
+      "position": 387,
+      "original_score": -1,
+      "probability_correct": 0.439384,
+      "keep": false
+    },
+    {
+      "position": 388,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 389,
+      "original_score": -1,
+      "probability_correct": 0.694303,
+      "keep": true
+    },
+    {
+      "position": 390,
+      "original_score": 1,
+      "probability_correct": 0.217686,
+      "keep": false
+    },
+    {
+      "position": 391,
+      "original_score": 1,
+      "probability_correct": 0.400493,
+      "keep": false
+    },
+    {
+      "position": 392,
+      "original_score": 1,
+      "probability_correct": 0.991427,
+      "keep": true
+    },
+    {
+      "position": 393,
+      "original_score": -1,
+      "probability_correct": 0.156932,
+      "keep": false
+    },
+    {
+      "position": 394,
+      "original_score": 1,
+      "probability_correct": 0.65517,
+      "keep": true
+    },
+    {
+      "position": 395,
+      "original_score": -1,
+      "probability_correct": 0.624295,
+      "keep": false
+    },
+    {
+      "position": 396,
+      "original_score": 1,
+      "probability_correct": 0.850517,
+      "keep": true
+    },
+    {
+      "position": 397,
+      "original_score": 1,
+      "probability_correct": 0.653315,
+      "keep": true
+    },
+    {
+      "position": 398,
+      "original_score": 1,
+      "probability_correct": 0.829699,
+      "keep": true
+    },
+    {
+      "position": 399,
+      "original_score": 1,
+      "probability_correct": 0.89643,
+      "keep": true
+    },
+    {
+      "position": 400,
+      "original_score": 1,
+      "probability_correct": 0.544202,
+      "keep": false
+    },
+    {
+      "position": 401,
+      "original_score": 1,
+      "probability_correct": 0.821601,
+      "keep": true
+    },
+    {
+      "position": 402,
+      "original_score": -1,
+      "probability_correct": 0.423339,
+      "keep": false
+    },
+    {
+      "position": 403,
+      "original_score": -1,
+      "probability_correct": 0.869262,
+      "keep": true
+    },
+    {
+      "position": 404,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 405,
+      "original_score": -1,
+      "probability_correct": 0.31485,
+      "keep": false
+    },
+    {
+      "position": 406,
+      "original_score": 1,
+      "probability_correct": 0.831597,
+      "keep": true
+    },
+    {
+      "position": 407,
+      "original_score": 1,
+      "probability_correct": 0.661397,
+      "keep": true
+    },
+    {
+      "position": 408,
+      "original_score": -1,
+      "probability_correct": 0.613394,
+      "keep": false
+    },
+    {
+      "position": 409,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 410,
+      "original_score": 1,
+      "probability_correct": 0.851568,
+      "keep": true
+    },
+    {
+      "position": 411,
+      "original_score": -1,
+      "probability_correct": 0.838689,
+      "keep": true
+    },
+    {
+      "position": 412,
+      "original_score": -1,
+      "probability_correct": 0.817908,
+      "keep": true
+    },
+    {
+      "position": 413,
+      "original_score": -1,
+      "probability_correct": 0.173508,
+      "keep": false
+    },
+    {
+      "position": 414,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 415,
+      "original_score": -1,
+      "probability_correct": 0.673207,
+      "keep": true
+    },
+    {
+      "position": 416,
+      "original_score": 1,
+      "probability_correct": 0.642059,
+      "keep": true
+    },
+    {
+      "position": 417,
+      "original_score": 1,
+      "probability_correct": 0.57662,
+      "keep": false
+    },
+    {
+      "position": 418,
+      "original_score": 1,
+      "probability_correct": 0.289282,
+      "keep": false
+    },
+    {
+      "position": 419,
+      "original_score": 1,
+      "probability_correct": 0.535337,
+      "keep": false
+    },
+    {
+      "position": 420,
+      "original_score": 1,
+      "probability_correct": 0.270935,
+      "keep": false
+    },
+    {
+      "position": 421,
+      "original_score": 1,
+      "probability_correct": 0.150074,
+      "keep": false
+    },
+    {
+      "position": 422,
+      "original_score": 1,
+      "probability_correct": 0.328352,
+      "keep": false
+    },
+    {
+      "position": 423,
+      "original_score": 1,
+      "probability_correct": 0.992826,
+      "keep": true
+    },
+    {
+      "position": 424,
+      "original_score": 1,
+      "probability_correct": 0.938686,
+      "keep": true
+    },
+    {
+      "position": 425,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 426,
+      "original_score": 1,
+      "probability_correct": 0.698795,
+      "keep": true
+    },
+    {
+      "position": 427,
+      "original_score": 1,
+      "probability_correct": 0.999961,
+      "keep": true
+    },
+    {
+      "position": 428,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 429,
+      "original_score": 1,
+      "probability_correct": 0.772507,
+      "keep": true
+    },
+    {
+      "position": 430,
+      "original_score": 1,
+      "probability_correct": 0.998549,
+      "keep": true
+    },
+    {
+      "position": 431,
+      "original_score": -1,
+      "probability_correct": 0.123447,
+      "keep": false
+    },
+    {
+      "position": 432,
+      "original_score": -1,
+      "probability_correct": 0.811852,
+      "keep": true
+    },
+    {
+      "position": 433,
+      "original_score": 1,
+      "probability_correct": 0.520786,
+      "keep": false
+    },
+    {
+      "position": 434,
+      "original_score": 1,
+      "probability_correct": 0.996022,
+      "keep": true
+    },
+    {
+      "position": 435,
+      "original_score": 1,
+      "probability_correct": 0.498914,
+      "keep": false
+    },
+    {
+      "position": 436,
+      "original_score": 1,
+      "probability_correct": 0.953597,
+      "keep": true
+    },
+    {
+      "position": 437,
+      "original_score": 1,
+      "probability_correct": 0.681461,
+      "keep": true
+    },
+    {
+      "position": 438,
+      "original_score": -1,
+      "probability_correct": 0.725476,
+      "keep": true
+    },
+    {
+      "position": 439,
+      "original_score": 1,
+      "probability_correct": 0.901391,
+      "keep": true
+    },
+    {
+      "position": 440,
+      "original_score": 1,
+      "probability_correct": 0.105881,
+      "keep": false
+    },
+    {
+      "position": 441,
+      "original_score": -1,
+      "probability_correct": 0.073411,
+      "keep": false
+    },
+    {
+      "position": 442,
+      "original_score": 1,
+      "probability_correct": 0.446082,
+      "keep": false
+    },
+    {
+      "position": 443,
+      "original_score": -1,
+      "probability_correct": 0.32791,
+      "keep": false
+    },
+    {
+      "position": 444,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 445,
+      "original_score": 1,
+      "probability_correct": 0.689244,
+      "keep": true
+    },
+    {
+      "position": 446,
+      "original_score": -1,
+      "probability_correct": 0.941254,
+      "keep": true
+    },
+    {
+      "position": 447,
+      "original_score": -1,
+      "probability_correct": 0.572563,
+      "keep": false
+    },
+    {
+      "position": 448,
+      "original_score": -1,
+      "probability_correct": 0.021407,
+      "keep": false
+    },
+    {
+      "position": 449,
+      "original_score": 1,
+      "probability_correct": 0.479414,
+      "keep": false
+    },
+    {
+      "position": 450,
+      "original_score": 1,
+      "probability_correct": 0.625056,
+      "keep": false
+    },
+    {
+      "position": 451,
+      "original_score": -1,
+      "probability_correct": 0.598155,
+      "keep": false
+    },
+    {
+      "position": 452,
+      "original_score": 1,
+      "probability_correct": 0.980389,
+      "keep": true
+    },
+    {
+      "position": 453,
+      "original_score": 1,
+      "probability_correct": 0.835315,
+      "keep": true
+    },
+    {
+      "position": 454,
+      "original_score": 1,
+      "probability_correct": 0.779545,
+      "keep": true
+    },
+    {
+      "position": 455,
+      "original_score": -1,
+      "probability_correct": 0.632481,
+      "keep": true
+    },
+    {
+      "position": 456,
+      "original_score": -1,
+      "probability_correct": 0.918715,
+      "keep": true
+    },
+    {
+      "position": 457,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 458,
+      "original_score": -1,
+      "probability_correct": 0.463121,
+      "keep": false
+    },
+    {
+      "position": 459,
+      "original_score": -1,
+      "probability_correct": 0.391725,
+      "keep": false
+    },
+    {
+      "position": 460,
+      "original_score": -1,
+      "probability_correct": 0.14417,
+      "keep": false
+    },
+    {
+      "position": 461,
+      "original_score": -1,
+      "probability_correct": 0.695112,
+      "keep": true
+    },
+    {
+      "position": 462,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 463,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 464,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 465,
+      "original_score": 1,
+      "probability_correct": 0.612601,
+      "keep": false
+    },
+    {
+      "position": 466,
+      "original_score": -1,
+      "probability_correct": 0.154685,
+      "keep": false
+    },
+    {
+      "position": 467,
+      "original_score": 1,
+      "probability_correct": 0.54857,
+      "keep": false
+    },
+    {
+      "position": 468,
+      "original_score": 1,
+      "probability_correct": 0.99974,
+      "keep": true
+    },
+    {
+      "position": 469,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 470,
+      "original_score": 1,
+      "probability_correct": 0.390702,
+      "keep": false
+    },
+    {
+      "position": 471,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 472,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 473,
+      "original_score": 1,
+      "probability_correct": 0.668691,
+      "keep": true
+    },
+    {
+      "position": 474,
+      "original_score": -1,
+      "probability_correct": 0.10562,
+      "keep": false
+    },
+    {
+      "position": 475,
+      "original_score": 1,
+      "probability_correct": 0.749787,
+      "keep": true
+    },
+    {
+      "position": 476,
+      "original_score": 1,
+      "probability_correct": 0.726773,
+      "keep": true
+    },
+    {
+      "position": 477,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 478,
+      "original_score": 1,
+      "probability_correct": 0.854133,
+      "keep": true
+    },
+    {
+      "position": 479,
+      "original_score": -1,
+      "probability_correct": 0.260139,
+      "keep": false
+    },
+    {
+      "position": 480,
+      "original_score": 1,
+      "probability_correct": 0.81706,
+      "keep": true
+    },
+    {
+      "position": 481,
+      "original_score": 1,
+      "probability_correct": 0.639752,
+      "keep": true
+    },
+    {
+      "position": 482,
+      "original_score": 1,
+      "probability_correct": 0.999028,
+      "keep": true
+    },
+    {
+      "position": 483,
+      "original_score": -1,
+      "probability_correct": 0.735253,
+      "keep": true
+    },
+    {
+      "position": 484,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 485,
+      "original_score": -1,
+      "probability_correct": 0.670493,
+      "keep": true
+    },
+    {
+      "position": 486,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 487,
+      "original_score": 1,
+      "probability_correct": 0.612222,
+      "keep": false
+    },
+    {
+      "position": 488,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 489,
+      "original_score": 1,
+      "probability_correct": 0.777957,
+      "keep": true
+    },
+    {
+      "position": 490,
+      "original_score": -1,
+      "probability_correct": 0.748381,
+      "keep": true
+    },
+    {
+      "position": 491,
+      "original_score": -1,
+      "probability_correct": 0.483111,
+      "keep": false
+    },
+    {
+      "position": 492,
+      "original_score": -1,
+      "probability_correct": 0.329806,
+      "keep": false
+    },
+    {
+      "position": 493,
+      "original_score": -1,
+      "probability_correct": 0.996596,
+      "keep": true
+    },
+    {
+      "position": 494,
+      "original_score": -1,
+      "probability_correct": 0.120744,
+      "keep": false
+    },
+    {
+      "position": 495,
+      "original_score": 1,
+      "probability_correct": 0.795,
+      "keep": true
+    },
+    {
+      "position": 496,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 497,
+      "original_score": 1,
+      "probability_correct": 0.842737,
+      "keep": true
+    },
+    {
+      "position": 498,
+      "original_score": -1,
+      "probability_correct": 0.993872,
+      "keep": true
+    },
+    {
+      "position": 499,
+      "original_score": -1,
+      "probability_correct": 0.772348,
+      "keep": true
+    },
+    {
+      "position": 500,
+      "original_score": 1,
+      "probability_correct": 0.722232,
+      "keep": true
+    },
+    {
+      "position": 501,
+      "original_score": -1,
+      "probability_correct": 0.566961,
+      "keep": false
+    },
+    {
+      "position": 502,
+      "original_score": 1,
+      "probability_correct": 0.072002,
+      "keep": false
+    },
+    {
+      "position": 503,
+      "original_score": -1,
+      "probability_correct": 0.073105,
+      "keep": false
+    },
+    {
+      "position": 504,
+      "original_score": 1,
+      "probability_correct": 0.539466,
+      "keep": false
+    },
+    {
+      "position": 505,
+      "original_score": 1,
+      "probability_correct": 0.158503,
+      "keep": false
+    },
+    {
+      "position": 506,
+      "original_score": 1,
+      "probability_correct": 0.900638,
+      "keep": true
+    },
+    {
+      "position": 507,
+      "original_score": -1,
+      "probability_correct": 0.127326,
+      "keep": false
+    },
+    {
+      "position": 508,
+      "original_score": 1,
+      "probability_correct": 0.485056,
+      "keep": false
+    },
+    {
+      "position": 509,
+      "original_score": -1,
+      "probability_correct": 0.020536,
+      "keep": false
+    },
+    {
+      "position": 510,
+      "original_score": -1,
+      "probability_correct": 0.549181,
+      "keep": false
+    },
+    {
+      "position": 511,
+      "original_score": 1,
+      "probability_correct": 0.325323,
+      "keep": false
+    },
+    {
+      "position": 512,
+      "original_score": -1,
+      "probability_correct": 0.265559,
+      "keep": false
+    },
+    {
+      "position": 513,
+      "original_score": -1,
+      "probability_correct": 0.700759,
+      "keep": true
+    },
+    {
+      "position": 514,
+      "original_score": -1,
+      "probability_correct": 0.930184,
+      "keep": true
+    },
+    {
+      "position": 515,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 516,
+      "original_score": 1,
+      "probability_correct": 0.305126,
+      "keep": false
+    },
+    {
+      "position": 517,
+      "original_score": -1,
+      "probability_correct": 0.953741,
+      "keep": true
+    },
+    {
+      "position": 518,
+      "original_score": -1,
+      "probability_correct": 0.14106,
+      "keep": false
+    },
+    {
+      "position": 519,
+      "original_score": 1,
+      "probability_correct": 0.718412,
+      "keep": true
+    },
+    {
+      "position": 520,
+      "original_score": -1,
+      "probability_correct": 0.60134,
+      "keep": false
+    },
+    {
+      "position": 521,
+      "original_score": -1,
+      "probability_correct": 0.96172,
+      "keep": true
+    },
+    {
+      "position": 522,
+      "original_score": 1,
+      "probability_correct": 0.265198,
+      "keep": false
+    },
+    {
+      "position": 523,
+      "original_score": -1,
+      "probability_correct": 0.7661,
+      "keep": true
+    },
+    {
+      "position": 524,
+      "original_score": -1,
+      "probability_correct": 0.743617,
+      "keep": true
+    },
+    {
+      "position": 525,
+      "original_score": 1,
+      "probability_correct": 0.694637,
+      "keep": true
+    },
+    {
+      "position": 526,
+      "original_score": -1,
+      "probability_correct": 0.505129,
+      "keep": false
+    },
+    {
+      "position": 527,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 528,
+      "original_score": 1,
+      "probability_correct": 0.848027,
+      "keep": true
+    },
+    {
+      "position": 529,
+      "original_score": -1,
+      "probability_correct": 0.245769,
+      "keep": false
+    },
+    {
+      "position": 530,
+      "original_score": -1,
+      "probability_correct": 0.273176,
+      "keep": false
+    },
+    {
+      "position": 531,
+      "original_score": -1,
+      "probability_correct": 0.79296,
+      "keep": true
+    },
+    {
+      "position": 532,
+      "original_score": 1,
+      "probability_correct": 0.483348,
+      "keep": false
+    },
+    {
+      "position": 533,
+      "original_score": -1,
+      "probability_correct": 0.713151,
+      "keep": true
+    },
+    {
+      "position": 534,
+      "original_score": 1,
+      "probability_correct": 0.835843,
+      "keep": true
+    },
+    {
+      "position": 535,
+      "original_score": 1,
+      "probability_correct": 0.654566,
+      "keep": true
+    },
+    {
+      "position": 536,
+      "original_score": -1,
+      "probability_correct": 0.671234,
+      "keep": true
+    },
+    {
+      "position": 537,
+      "original_score": 1,
+      "probability_correct": 0.561203,
+      "keep": false
+    },
+    {
+      "position": 538,
+      "original_score": 1,
+      "probability_correct": 0.461916,
+      "keep": false
+    },
+    {
+      "position": 539,
+      "original_score": 1,
+      "probability_correct": 0.998744,
+      "keep": true
+    },
+    {
+      "position": 540,
+      "original_score": -1,
+      "probability_correct": 0.711291,
+      "keep": true
+    },
+    {
+      "position": 541,
+      "original_score": 1,
+      "probability_correct": 0.680406,
+      "keep": true
+    },
+    {
+      "position": 542,
+      "original_score": -1,
+      "probability_correct": 0.109071,
+      "keep": false
+    },
+    {
+      "position": 543,
+      "original_score": -1,
+      "probability_correct": 0.984826,
+      "keep": true
+    },
+    {
+      "position": 544,
+      "original_score": -1,
+      "probability_correct": 0.312222,
+      "keep": false
+    },
+    {
+      "position": 545,
+      "original_score": -1,
+      "probability_correct": 0.729476,
+      "keep": true
+    },
+    {
+      "position": 546,
+      "original_score": 1,
+      "probability_correct": 0.571788,
+      "keep": false
+    },
+    {
+      "position": 547,
+      "original_score": 1,
+      "probability_correct": 0.991199,
+      "keep": true
+    },
+    {
+      "position": 548,
+      "original_score": 1,
+      "probability_correct": 0.939072,
+      "keep": true
+    },
+    {
+      "position": 549,
+      "original_score": -1,
+      "probability_correct": 0.734354,
+      "keep": true
+    },
+    {
+      "position": 550,
+      "original_score": -1,
+      "probability_correct": 0.999429,
+      "keep": true
+    },
+    {
+      "position": 551,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 552,
+      "original_score": 1,
+      "probability_correct": 0.743313,
+      "keep": true
+    },
+    {
+      "position": 553,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 554,
+      "original_score": 1,
+      "probability_correct": 0.350835,
+      "keep": false
+    },
+    {
+      "position": 555,
+      "original_score": -1,
+      "probability_correct": 0.639425,
+      "keep": true
+    },
+    {
+      "position": 556,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 557,
+      "original_score": -1,
+      "probability_correct": 0.359823,
+      "keep": false
+    },
+    {
+      "position": 558,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 559,
+      "original_score": -1,
+      "probability_correct": 0.080608,
+      "keep": false
+    },
+    {
+      "position": 560,
+      "original_score": 1,
+      "probability_correct": 0.715804,
+      "keep": true
+    },
+    {
+      "position": 561,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 562,
+      "original_score": 1,
+      "probability_correct": 0.625001,
+      "keep": false
+    },
+    {
+      "position": 563,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 564,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 565,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 566,
+      "original_score": -1,
+      "probability_correct": 0.995866,
+      "keep": true
+    },
+    {
+      "position": 567,
+      "original_score": 1,
+      "probability_correct": 0.631753,
+      "keep": true
+    },
+    {
+      "position": 568,
+      "original_score": 1,
+      "probability_correct": 0.999963,
+      "keep": true
+    },
+    {
+      "position": 569,
+      "original_score": 1,
+      "probability_correct": 0.479467,
+      "keep": false
+    },
+    {
+      "position": 570,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 571,
+      "original_score": -1,
+      "probability_correct": 0.513556,
+      "keep": false
+    },
+    {
+      "position": 572,
+      "original_score": 1,
+      "probability_correct": 0.296792,
+      "keep": false
+    },
+    {
+      "position": 573,
+      "original_score": -1,
+      "probability_correct": 0.596226,
+      "keep": false
+    },
+    {
+      "position": 574,
+      "original_score": -1,
+      "probability_correct": 0.09191,
+      "keep": false
+    },
+    {
+      "position": 575,
+      "original_score": -1,
+      "probability_correct": 0.597434,
+      "keep": false
+    },
+    {
+      "position": 576,
+      "original_score": 1,
+      "probability_correct": 0.326458,
+      "keep": false
+    },
+    {
+      "position": 577,
+      "original_score": 1,
+      "probability_correct": 0.750621,
+      "keep": true
+    },
+    {
+      "position": 578,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 579,
+      "original_score": -1,
+      "probability_correct": 0.213983,
+      "keep": false
+    },
+    {
+      "position": 580,
+      "original_score": 1,
+      "probability_correct": 0.685868,
+      "keep": true
+    },
+    {
+      "position": 581,
+      "original_score": 1,
+      "probability_correct": 0.999067,
+      "keep": true
+    },
+    {
+      "position": 582,
+      "original_score": 1,
+      "probability_correct": 0.965544,
+      "keep": true
+    },
+    {
+      "position": 583,
+      "original_score": 1,
+      "probability_correct": 0.750828,
+      "keep": true
+    },
+    {
+      "position": 584,
+      "original_score": -1,
+      "probability_correct": 0.738564,
+      "keep": true
+    },
+    {
+      "position": 585,
+      "original_score": -1,
+      "probability_correct": 0.36104,
+      "keep": false
+    },
+    {
+      "position": 586,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 587,
+      "original_score": 1,
+      "probability_correct": 0.893172,
+      "keep": true
+    },
+    {
+      "position": 588,
+      "original_score": -1,
+      "probability_correct": 0.325837,
+      "keep": false
+    },
+    {
+      "position": 589,
+      "original_score": -1,
+      "probability_correct": 0.404234,
+      "keep": false
+    },
+    {
+      "position": 590,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 591,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 592,
+      "original_score": 1,
+      "probability_correct": 0.689398,
+      "keep": true
+    },
+    {
+      "position": 593,
+      "original_score": 0,
+      "probability_correct": 0.0,
+      "keep": false
+    },
+    {
+      "position": 594,
+      "original_score": -1,
+      "probability_correct": 0.468578,
+      "keep": false
+    },
+    {
+      "position": 595,
+      "original_score": 1,
+      "probability_correct": 0.986767,
+      "keep": true
+    },
+    {
+      "position": 596,
+      "original_score": 1,
+      "probability_correct": 0.754004,
+      "keep": true
+    },
+    {
+      "position": 597,
+      "original_score": 1,
+      "probability_correct": 0.814173,
+      "keep": true
+    },
+    {
+      "position": 598,
+      "original_score": 1,
+      "probability_correct": 0.965631,
+      "keep": true
+    },
+    {
+      "position": 599,
+      "original_score": -1,
+      "probability_correct": 0.057459,
+      "keep": false
+    }
+  ]
+}

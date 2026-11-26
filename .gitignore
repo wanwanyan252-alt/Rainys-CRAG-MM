@@ -1,11 +1,27 @@
 **/__pycache__
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.obsidian/
+.vscode/
+*.log
+.matpool_known_hosts
+.github_known_hosts
+.h/
+*.tar
 
 # Environment files
 .env
 .vscode
 .venv-light/
 
-# Results directory
-results/
+# Generated evaluation output
+results*/
+
+# Local model artifacts
+models/
+
+# Large generated datasets, images, checkpoints, and raw evaluations
+artifacts/
 
 debug_images/

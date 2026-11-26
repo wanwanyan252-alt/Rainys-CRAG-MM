@@ -1,1 +1,0 @@
-Elasped time: Function ran for 5.4350 seconds

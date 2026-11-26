@@ -6,7 +6,7 @@
 
 import os
 from itertools import zip_longest
-from typing import Any
+from typing import Any, Optional
 
 import torch
 import vllm
@@ -27,27 +27,9 @@ from .prompt_constants import (
     QUERY_REWRITE_STEP_1,
     QUERY_REWRITE_SYSTEM,
     QueryAnalysis,
+    normalize_abstention_response,
 )
-
-# GPU 利用率设置
-# 本地运行时，请根据可用 GPU 数量调整 VLLM_TENSOR_PARALLEL_SIZE
-# 例如，如果服务器上有 2 张 GPU，则设置 VLLM_TENSOR_PARALLEL_SIZE=2。
-# 如需使用 VLLM_TENSOR_PARALLEL_SIZE>1 进行本地评测，
-# 可能需要取消下方这一行的注释。
-
-#### 请确保提交时 VLLM_TENSOR_PARALLEL_SIZE=1。
-VLLM_TENSOR_PARALLEL_SIZE = torch.cuda.device_count()
-
-if VLLM_TENSOR_PARALLEL_SIZE > 1:
-    os.environ["VLLM_WORKER_MULTIPROC_METHOD"] = "spawn"
-
-VLLM_GPU_MEMORY_UTILIZATION = 0.85
-
-# 这些是让模型在单张 NVIDIA L40s GPU 上运行的模型专用参数
-MAX_MODEL_LEN = 30000
-MAX_NUM_SEQS = 2
-
-MAX_GENERATION_TOKENS = 1000
+from .vllm_runtime import VllmRuntimeConfig
 
 
 class VlmAgent(BaseAgent):
@@ -56,7 +38,7 @@ class VlmAgent(BaseAgent):
     def __init__(
         self,
         model_name="meta-llama/Llama-3.2-11B-Vision-Instruct",
-        max_gen_len=64,
+        max_gen_len: Optional[int] = None,
         **kwargs,
     ):
         """
@@ -68,7 +50,19 @@ class VlmAgent(BaseAgent):
         """
         super().__init__()
         self.model_name = model_name
-        self.max_gen_len = max_gen_len
+        visible_gpu_count = torch.cuda.device_count()
+        self.runtime = VllmRuntimeConfig.from_env(visible_gpu_count)
+        self.runtime.validate_visible_gpus(visible_gpu_count)
+        if self.runtime.tensor_parallel_size > 1:
+            os.environ["VLLM_WORKER_MULTIPROC_METHOD"] = "spawn"
+
+        self.max_gen_len = (
+            self.runtime.max_generation_tokens
+            if max_gen_len is None
+            else int(max_gen_len)
+        )
+        if self.max_gen_len < 1:
+            raise ValueError("max_gen_len must be at least 1")
 
         self.llm = self._initialize_models()
         self.tokenizer = self._get_tokenizer()
@@ -82,18 +76,18 @@ class VlmAgent(BaseAgent):
         # 使用 vLLM 初始化模型
         return vllm.LLM(
             self.model_name,
-            tensor_parallel_size=VLLM_TENSOR_PARALLEL_SIZE,
-            gpu_memory_utilization=VLLM_GPU_MEMORY_UTILIZATION,
-            max_model_len=MAX_MODEL_LEN,
-            max_num_seqs=MAX_NUM_SEQS,
+            tensor_parallel_size=self.runtime.tensor_parallel_size,
+            gpu_memory_utilization=self.runtime.gpu_memory_utilization,
+            max_model_len=self.runtime.max_model_len,
+            max_num_seqs=self.runtime.max_num_seqs,
             trust_remote_code=True,
-            dtype="bfloat16",
-            enforce_eager=True,
+            dtype=self.runtime.dtype,
+            enforce_eager=self.runtime.enforce_eager,
             limit_mm_per_prompt={"image": 1},
         )
 
     def get_batch_size(self) -> int:
-        return 16
+        return self.runtime.batch_size
 
     def _build_image_content(self, image: Image.Image) -> list[dict[str, str]]:
         return [{"type": "image"}]
@@ -144,7 +138,7 @@ class VlmAgent(BaseAgent):
         return vllm.SamplingParams(
             temperature=0,
             top_p=1,
-            max_tokens=MAX_GENERATION_TOKENS,
+            max_tokens=self.max_gen_len,
             skip_special_tokens=True,
         )
 
@@ -165,7 +159,10 @@ class VlmAgent(BaseAgent):
         # 生成回答
         outputs = self.llm.generate(inputs, sampling_params=self.sampling_params)
 
-        responses = [output.outputs[0].text for output in outputs]
+        responses = [
+            normalize_abstention_response(output.outputs[0].text)
+            for output in outputs
+        ]
         return responses
 
 
@@ -179,7 +176,13 @@ class PixtralAgent(VlmAgent):
         # 使用 vLLM 初始化模型
         return vllm.LLM(
             self.model_name,
-            max_model_len=MAX_MODEL_LEN,
+            tensor_parallel_size=self.runtime.tensor_parallel_size,
+            gpu_memory_utilization=self.runtime.gpu_memory_utilization,
+            max_model_len=self.runtime.max_model_len,
+            max_num_seqs=self.runtime.max_num_seqs,
+            trust_remote_code=True,
+            dtype=self.runtime.dtype,
+            enforce_eager=self.runtime.enforce_eager,
             limit_mm_per_prompt={
                 "image": 1
             },  # 在 CRAG-MM 数据集中，每个对话最多有 1 张图像
@@ -200,11 +203,18 @@ class PixtralAgent(VlmAgent):
         return vllm.SamplingParams(
             temperature=0,
             top_p=1,
-            max_tokens=MAX_GENERATION_TOKENS,
+            max_tokens=self.max_gen_len,
         )
 
 
 class QwenAgent(VlmAgent):
+    def _get_tokenizer(self):
+        self.processor = AutoProcessor.from_pretrained(
+            self.model_name, trust_remote_code=True
+        )
+        processor_tokenizer = getattr(self.processor, "tokenizer", None)
+        return processor_tokenizer or self.llm.get_tokenizer()
+
     def _build_text_content(self, text: str) -> list[dict[str, str]]:
         return [{"type": "text", "text": text}]
 
@@ -221,8 +231,7 @@ class QwenAgent(VlmAgent):
     def _process_messages(
         self, messages: list, image: Image.Image
     ) -> dict[str, str | dict[str, Image.Image]]:
-        processor = AutoProcessor.from_pretrained(self.model_name)
-        prompt = processor.apply_chat_template(
+        prompt = self.processor.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True
         )
         image_inputs, _ = process_vision_info(messages)
@@ -278,7 +287,7 @@ class QueryRewrite(VlmAgent):
             sampling_params=vllm.SamplingParams(
                 temperature=0,
                 top_p=1,
-                max_tokens=MAX_GENERATION_TOKENS,
+                max_tokens=self.max_gen_len,
                 skip_special_tokens=True,
             ),
         )
@@ -316,7 +325,7 @@ class QueryRewrite(VlmAgent):
                 guided_decoding=guided_decoding_params_json,
                 temperature=0,
                 top_p=1,
-                max_tokens=MAX_GENERATION_TOKENS,
+                max_tokens=self.max_gen_len,
                 skip_special_tokens=True,
             ),
         )

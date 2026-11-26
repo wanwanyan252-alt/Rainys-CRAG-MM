@@ -11,7 +11,9 @@ question given an image.
 Please follow these guidelines when formulating your response:
 1. Your response must be grounded in the image and based on factual information.
 2. Keep your response concise and to the point. Strive to answer in one sentence.
-3. If you are uncertain or don’t know the answer, respond with “I don’t know”.
+3. Resolve what specific object the question refers to and answer only the requested
+property. Do not substitute a broader related fact for the requested fact.
+4. If you are uncertain or don’t know the answer, respond exactly with “I don’t know”.
 """
 
 SYSTEM_MULTI_PROMPT = """You are a helpful assistant that truthfully answers the user \
@@ -22,7 +24,9 @@ Please follow these guidelines when formulating your response:
 1. Your response must be grounded in the image and based on factual information.
 2. Build upon previous conversations when responding.
 3. Keep your response concise and to the point. Strive to answer in one sentence. 
-4. If you are uncertain or don’t know the answer, respond with “I don’t know”.
+4. Resolve what specific object the question refers to and answer only the requested
+property. Do not substitute a broader related fact for the requested fact.
+5. If you are uncertain or don’t know the answer, respond exactly with “I don’t know”.
 """
 
 # 关键消息重复片段
@@ -33,9 +37,30 @@ KEY_RAG_PROMPT = (
 KEY_MESSAGE_HISTORY_PROMPT = "Keep the context of the conversation history in mind. "
 KEY_USER_PROMPT = (
     "Keep your response concise and to the point. Strive to answer in one sentence. If"
-    " you are uncertain or unable to answer the question, respond with “I don’t"
-    " know”.\n"
+    " you are uncertain or unable to answer the question, respond exactly with “I"
+    " don’t know” and nothing else. Answer the specific property asked; do not replace"
+    " it with a broader related fact.\n"
 )
+
+
+def normalize_abstention_response(response: str) -> str:
+    """Keep benchmark abstentions unambiguous and free of irrelevant explanations."""
+    normalized = response.strip()
+    if normalized.lower().startswith(
+        (
+            "i don't know",
+            "i don’t know",
+            "i do not know",
+            "i don't have enough information",
+            "i do not have enough information",
+            "i cannot determine",
+            "i can't determine",
+            "i am unable to determine",
+            "i'm unable to determine",
+        )
+    ):
+        return "I don't know."
+    return normalized
 
 
 # 查询重写

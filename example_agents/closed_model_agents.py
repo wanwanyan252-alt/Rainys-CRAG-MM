@@ -6,8 +6,10 @@
 
 import os
 import time
+import base64
 from abc import abstractmethod
 from concurrent.futures import as_completed, ThreadPoolExecutor
+from io import BytesIO
 from itertools import zip_longest
 from typing import Any
 
@@ -15,10 +17,18 @@ import openai
 from anthropic import Anthropic
 from google.generativeai import GenerativeModel, configure
 from PIL import Image
-from vllm.multimodal.utils import encode_image_base64
 
 from .base_agent import BaseAgent, Message, Messages
 from .prompt_constants import SYSTEM_MULTI_PROMPT, SYSTEM_PROMPT
+
+
+def encode_image_base64(image: Image.Image) -> str:
+    """Encode a PIL image without importing the GPU-only vLLM package."""
+    if image.mode not in {"RGB", "L"}:
+        image = image.convert("RGB")
+    buffer = BytesIO()
+    image.save(buffer, format="JPEG")
+    return base64.b64encode(buffer.getvalue()).decode("ascii")
 
 
 class ClosedModelBaseAgent(BaseAgent):

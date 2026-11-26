@@ -1,0 +1,6 @@
+# Optional hosted-model agents. These are intentionally separate from vLLM.
+-r requirements-local.txt
+
+anthropic
+google-generativeai
+xai_sdk

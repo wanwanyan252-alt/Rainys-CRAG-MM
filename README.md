@@ -1,6 +1,38 @@
 # CRAG-MM: MULTI-MODAL MULTI-TURN COMPREHENSIVE RAG BENCHMARK
 [![arXiv](https://img.shields.io/badge/arXiv-2510.26160-b31b1b.svg)](https://arxiv.org/abs/2510.26160)
 
+> Local development note: this checkout includes project-owned compatibility
+> fixes and regression tests for Windows retrieval/evaluation work. See
+> [Current handoff](HANDOFF.md) and
+> [Local development and recovery](docs/local_development.md) before rebuilding
+> the environment. Use the separate [Cloud CUDA runtime](docs/cloud_runtime.md)
+> guide for an open-source VLM run.
+
+## Full validation result (2026-11-23)
+
+This checkout now includes a reproducible evaluation of all 1,938 examples in the
+official `v0.1.2` single-turn validation split using Llama 3.2 11B Vision Instruct,
+the official image/web retrieval indexes, and a DeepSeek Flash comparison judge.
+
+| Split | Count | Correct | Abstain | Wrong | Truthfulness | Coverage |
+|---|---:|---:|---:|---:|---:|---:|
+| Development (`0–199`) | 200 | 81 | 83 | 36 | 0.2250 | 58.50% |
+| Frozen blind (`200–1937`) | 1,738 | 536 | 683 | 519 | 0.0098 | 60.70% |
+| Full validation | 1,938 | 617 | 766 | 555 | 0.0320 | 60.47% |
+
+The first 200 examples were used during development; positions 200–1937 were run
+once with the strategy frozen and are the primary generalization result. DeepSeek
+is a comparison judge, not the benchmark's official `gpt-4o` judge. The complete
+methodology, grouped metrics, limitations, artifact hashes, and failure analysis are
+in [the full validation report](docs/full_validation_report_2026-11-23.md).
+
+The final competition-oriented iteration adds a 4-bit LoRA adapter, a fast
+contact-sheet path, structured visual analysis, deterministic multi-query retrieval,
+entity/scope filtering, an independent 22.7M MiniLM cross-encoder, and a locally
+calibrated refusal gate. On held-out positions 400–599 it reaches Truthfulness
+`0.115` with P95 latency `5.381s` and no 10-second timeout. See the
+[final completion report](docs/final_multiquery_reranker_completion_2026-11-25.md).
+
  [CRAG-MM](https://arxiv.org/abs/2510.26160) is a Comprehensive RAG benchmark for Multi-modal Multi-turn conversations. The benchmark contains a diverse set of (image, question, answer) triplets and visual-based multi-turn conversations across 13 domains, including 6.2K egocentric images designed to emulate wearable captures. The benchmark is designed to encapsulate real-world challenges in wearables AI applications, consisting of various image-quality issues, question types, entity popularity and information dynamism, as well as multi-turn dependencies.
 
 # Table of Contents

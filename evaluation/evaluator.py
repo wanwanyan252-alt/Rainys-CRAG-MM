@@ -96,6 +96,7 @@ class CRAGEvaluator:
         agent: BaseAgent | None,
         eval_model_name: str | None = None,
         eval_api_key: str | None = None,
+        eval_base_url: str | None = None,
         num_conversations: int | None = None,
         image_search: bool = False,
         web_search: bool = False,
@@ -109,6 +110,7 @@ class CRAGEvaluator:
         self.agent = agent
         self.eval_model_name = eval_model_name
         self.eval_api_key = eval_api_key
+        self.eval_base_url = eval_base_url
         self.num_conversations = num_conversations
         self.image_search = image_search
         self.web_search = web_search
@@ -131,7 +133,9 @@ class CRAGEvaluator:
         # 若提供了评测模型，则初始化 LLM 裁判
         self.llm_judge: LLMJudge | None = None
         if self.eval_model_name and self.eval_api_key:
-            self.llm_judge = LLMJudge(self.eval_api_key, self.eval_model_name)
+            self.llm_judge = LLMJudge(
+                self.eval_api_key, self.eval_model_name, self.eval_base_url
+            )
 
     def evaluate_response(self, crag_turn_data: dict[str, any]) -> dict[str, any]:
         """
